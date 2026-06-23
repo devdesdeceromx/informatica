@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Panel Docente · COBD · CONALEP Classroom</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --azul:#0E7EC4;--azul-osc:#065A8F;--azul-tinte:#EAF4FC;
+  --ink:#0F1E2D;--gris:#4A5E6D;--bg:#F4F8FB;--surface:#fff;
+  --line:#D0E4F0;--ok:#065F46;--ok-bg:#ECFDF5;--rojo:#B91C1C;--rojo-bg:#FEF2F2;
+  --radius:10px;--sans:'IBM Plex Sans',sans-serif;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);min-height:100vh}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#0E7EC4,#38BDF8,#0E7EC4);background-size:200%;animation:gradbar 4s linear infinite;z-index:200}
+@keyframes gradbar{0%{background-position:0%}100%{background-position:200%}}
+
+/* GATE */
+.gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse 60% 40% at 10% 0%,rgba(14,126,196,.12),transparent),#0A1929;padding:20px}
+.gate-card{background:#fff;border-radius:18px;max-width:400px;width:100%;overflow:hidden;box-shadow:0 40px 80px rgba(14,126,196,.3)}
+.gate-head{background:linear-gradient(160deg,#043556,#0E7EC4);padding:28px 28px 24px;text-align:center;color:#fff}
+.gate-head .glogo{width:48px;height:48px;border-radius:12px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff}
+.gate-head h2{font-size:18px;margin-bottom:3px}
+.gate-head p{font-size:12px;opacity:.7}
+.gate-body{padding:24px 28px 28px}
+.g-field{margin-bottom:12px}
+.g-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gris);margin-bottom:5px}
+.g-field input{width:100%;border:1px solid var(--line);border-radius:8px;padding:11px 13px;font-family:var(--sans);font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.g-field input:focus{border-color:var(--azul);box-shadow:0 0 0 3px rgba(14,126,196,.12)}
+.btn{background:linear-gradient(135deg,#0E7EC4,#0EA5E9);color:#fff;border:none;border-radius:8px;padding:11px 20px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;width:100%;font-family:var(--sans)}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(14,126,196,.4)}
+.btn.sm{width:auto;padding:8px 16px;font-size:13px}
+.btn.ghost{background:transparent;color:var(--azul-osc);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--azul-tinte)}
+.btn.danger{background:linear-gradient(135deg,#B91C1C,#DC2626)}
+.btn.danger:hover{box-shadow:0 4px 14px rgba(185,28,28,.4)}
+.gate-err{background:var(--rojo-bg);border:1px solid #FECACA;border-radius:8px;padding:9px 13px;font-size:13px;color:var(--rojo);margin-bottom:12px;display:none}
+.gate-err.show{display:block}
+
+/* APP */
+.app{display:none}
+.topbar{background:var(--surface);border-bottom:1px solid var(--line);padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;position:sticky;top:3px;z-index:100;box-shadow:0 1px 4px rgba(14,126,196,.06)}
+.top-brand{display:flex;align-items:center;gap:12px}
+.logo{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,#0E7EC4,#38BDF8);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.top-brand h1{font-size:15px;font-weight:700;color:var(--ink)}
+.top-brand p{font-size:11px;color:var(--gris)}
+.top-user{text-align:right}
+.top-user strong{display:block;font-size:14px}
+.top-user span{font-size:12px;color:var(--gris)}
+
+.main{max-width:1100px;margin:0 auto;padding:28px 24px}
+
+/* FILTER BAR */
+.filters{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.filters label{font-size:12px;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.5px}
+.filters select,.filters input{border:1px solid var(--line);border-radius:7px;padding:8px 12px;font-size:14px;font-family:var(--sans);color:var(--ink);outline:none;background:var(--bg);transition:border-color .2s}
+.filters select:focus,.filters input:focus{border-color:var(--azul);box-shadow:0 0 0 2px rgba(14,126,196,.1)}
+.filters .spacer{flex:1}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;text-align:center;border-left:4px solid var(--azul)}
+.stat .n{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--azul);line-height:1;margin-bottom:5px}
+.stat .l{font-size:12px;color:var(--gris);line-height:1.4}
+.stat.green{border-left-color:#059669}.stat.green .n{color:#059669}
+.stat.orange{border-left-color:#D97706}.stat.orange .n{color:#D97706}
+.stat.red{border-left-color:var(--rojo)}.stat.red .n{color:var(--rojo)}
+
+/* SECTION HEADING */
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.sec-head h2{font-size:15px;font-weight:700;color:var(--ink)}
+.sec-head p{font-size:12px;color:var(--gris);font-family:var(--mono)}
+
+/* TABLE */
+.tabla-wrap{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:28px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{background:linear-gradient(180deg,#EAF4FC,#D9EDFA);color:var(--azul-osc);font-weight:700;padding:11px 13px;text-align:left;border-bottom:2px solid var(--azul);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{background:linear-gradient(180deg,#D9EDFA,#C5E4F5)}
+td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:middle;color:var(--gris)}
+tr:hover td{background:#F4F8FB}
+tr:last-child td{border-bottom:none}
+td strong{color:var(--ink)}
+td .mat{font-family:var(--mono);font-size:12px}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:700;font-family:var(--mono)}
+.badge.enviado{background:var(--ok-bg);color:var(--ok);border:1px solid #A7F3D0}
+.badge.activo{background:#EFF6FF;color:#1D4ED8;border:1px solid #BFDBFE}
+.badge.sinini{background:#F3F4F6;color:#6B7280;border:1px solid #E5E7EB}
+.badge.parcial{background:#FFF7ED;color:#92400E;border:1px solid #FDE68A}
+.prog-mini{width:80px;height:6px;background:var(--line);border-radius:99px;overflow:hidden;display:inline-block;vertical-align:middle}
+.prog-mini-fill{height:100%;background:linear-gradient(90deg,#0E7EC4,#38BDF8);border-radius:99px}
+.score-num{font-family:var(--mono);font-weight:700;color:var(--azul-osc)}
+.empty-msg{text-align:center;padding:40px;color:var(--gris);font-size:14px}
+
+/* MODAL DETALLE */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px;width:100%;max-width:680px;max-height:85vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.3)}
+.modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:#fff;z-index:10}
+.modal-head h3{font-size:17px;font-weight:700}
+.modal-close{font-size:20px;cursor:pointer;color:var(--gris);background:none;border:none;line-height:1;padding:4px}
+.modal-close:hover{color:var(--rojo)}
+.modal-body{padding:20px 24px 24px}
+.detail-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.detail-row:last-child{border-bottom:none}
+.detail-row .dk{font-weight:600;color:var(--ink)}
+.detail-row .dv{color:var(--gris);text-align:right;max-width:60%}
+.resp-block{background:#F4F8FB;border-radius:8px;padding:12px 14px;margin-top:8px;font-size:13px;color:var(--gris);line-height:1.65;white-space:pre-wrap;max-height:160px;overflow-y:auto;font-family:var(--mono)}
+.resp-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--azul);font-weight:700;margin-top:14px;margin-bottom:4px}
+
+@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- GATE DOCENTE -->
+<div class="gate" id="gateD">
+  <div class="gate-card">
+    <div class="gate-head">
+      <div class="glogo">SQL</div>
+      <h2>Panel Docente · COBD</h2>
+      <p>Construcción de bases de datos · CONALEP</p>
+    </div>
+    <div class="gate-body">
+      <div class="gate-err" id="gateErrD"></div>
+      <div class="g-field"><label>Correo institucional</label><input type="email" id="dEmail" placeholder="Correo del docente"></div>
+      <div class="g-field"><label>Contraseña</label><input type="password" id="dPass" placeholder="Contraseña"></div>
+      <button class="btn" onclick="loginDocente()">Acceder al panel →</button>
+      <button class="btn ghost" style="margin-top:10px" onclick="enviarResetDocente()">Enviar recuperación de contraseña</button>
+      <p style="font-size:12px;color:#4A5E6D;line-height:1.5;margin-top:10px">
+        Si Supabase rechaza el acceso, aquí se mostrará el error real. El usuario debe existir en Authentication y en la tabla <strong>perfiles</strong> con rol <strong>docente</strong>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- APP DOCENTE -->
+<div class="app" id="appD">
+  <div class="topbar">
+    <div class="top-brand">
+      <div class="logo">SQL</div>
+      <div>
+        <h1>Panel Docente <span id="badgeMod" style="font-size:12px;background:var(--azul-tinte);color:var(--azul-osc);padding:3px 10px;border-radius:99px;font-weight:600;margin-left:6px"></span></h1>
+        <p>COBD Classroom · Ing. Santiago Martínez González</p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div class="top-user"><strong id="docenteLabel">—</strong><span id="docenteEmail">—</span></div>
+      <button class="btn sm ghost" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- FILTROS -->
+    <div class="filters">
+      <div>
+        <label style="display:block;margin-bottom:4px">Módulo</label>
+        <select id="fMod" onchange="filtrar()">
+          <option value="cobd_u3">COBD · Unidad 3 · Aseguramiento</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:4px">Grupo</label>
+        <select id="fGrupo" onchange="filtrar()">
+          <option value="">Todos</option>
+          <option>410</option>
+          <option>411</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:4px">Buscar alumno</label>
+        <input type="text" id="fBuscar" placeholder="Nombre o matrícula..." oninput="filtrar()" style="min-width:200px">
+      </div>
+      <div class="spacer"></div>
+      <button class="btn sm" onclick="cargarDatos()">↻ Actualizar</button>
+      <button class="btn sm ghost" onclick="exportCSV()">↓ Exportar CSV</button>
+    </div>
+
+    <!-- ESTADÍSTICAS -->
+    <div class="stats" id="statsBar">
+      <div class="stat"><div class="n" id="stTotal">—</div><div class="l">Alumnos en vista</div></div>
+      <div class="stat green"><div class="n" id="stEnviados">—</div><div class="l">Reportes enviados</div></div>
+      <div class="stat orange"><div class="n" id="stPromedio">—</div><div class="l">Promedio del grupo</div></div>
+      <div class="stat red"><div class="n" id="stSinIni">—</div><div class="l">Sin iniciar</div></div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="sec-head">
+      <h2 id="tablaLabel">COBD · Unidad 3 · Grupo 410 y 411</h2>
+      <p>Clic en encabezado para ordenar · clic en "Ver" para detalle</p>
+    </div>
+    <div class="tabla-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('nombre')">Alumno ↕</th>
+            <th onclick="sortBy('grupo')">Grupo</th>
+            <th onclick="sortBy('turno')">Turno</th>
+            <th>Avance</th>
+            <th onclick="sortBy('act1pts')">Act.1 RA3.1</th>
+            <th onclick="sortBy('act2pts')">Act.2 RA3.2</th>
+            <th onclick="sortBy('total')">Calificación</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody">
+          <tr><td colspan="9" class="empty-msg">Cargando datos desde la nube...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal-bg" id="modalBg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Detalle del alumno</h3>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ════ CONFIGURACIÓN — igual que el cuaderno ════ */
+const SUPA_URL = 'https://tnnudyudangwnnjcacyh.supabase.co';
+const SUPA_KEY = 'sb_publishable_MNO7k62n0RW8qPjHkxjBXQ_HMhpLVAy';
+const CUADERNO = 'cobd_u3';
+const CLAVE_DOCENTE = 'COBD2526';
+
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+let allData = [], sortCol = 'nombre', sortAsc = true;
+
+/* ════ AUTH DOCENTE ════ */
+function traducirAuthError(error){
+  const msg = (error?.message || '').toLowerCase();
+  if(msg.includes('invalid login credentials')) return 'Supabase rechazó el acceso: correo o contraseña incorrectos. Revisa la contraseña del usuario en Authentication.';
+  if(msg.includes('email not confirmed')) return 'El correo existe, pero no está confirmado en Supabase. En Authentication marca el usuario como confirmado o recréalo con Auto Confirm.';
+  if(msg.includes('rate limit')) return 'Supabase bloqueó temporalmente muchos intentos. Espera unos minutos y vuelve a probar.';
+  return 'Error de Supabase: ' + (error?.message || 'error desconocido');
+}
+
+async function loginDocente(){
+  const email = document.getElementById('dEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('dPass').value;
+  if(!email||!pass){ showErr('Completa correo y contraseña.'); return; }
+  if(!email.endsWith('@tam.conalep.edu.mx')){ showErr('Usa un correo institucional @tam.conalep.edu.mx'); return; }
+
+  const btn = document.querySelector('#gateD .btn');
+  btn.textContent='Accediendo...'; btn.disabled=true;
+
+  const {data,error} = await sb.auth.signInWithPassword({email,password:pass});
+
+  if(error){
+    showErr(traducirAuthError(error));
+    btn.textContent='Acceder al panel →';
+    btn.disabled=false;
+    return;
+  }
+
+  const {data:doc,error:docErr} = await sb
+    .from('perfiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .maybeSingle();
+
+  if(docErr){
+    await sb.auth.signOut();
+    showErr('Sí inició sesión, pero no pude leer la tabla perfiles: ' + docErr.message);
+    btn.textContent='Acceder al panel →'; btn.disabled=false;
+    return;
+  }
+
+  if(!doc){
+    await sb.auth.signOut();
+    showErr('Sí inició sesión, pero este usuario no existe en la tabla perfiles. Inserta su registro con rol docente.');
+    btn.textContent='Acceder al panel →'; btn.disabled=false;
+    return;
+  }
+
+  if((doc.rol || '').toLowerCase() !== 'docente'){
+    await sb.auth.signOut();
+    showErr('Sí inició sesión, pero la cuenta no tiene rol docente. Rol actual: ' + (doc.rol || 'vacío'));
+    btn.textContent='Acceder al panel →'; btn.disabled=false;
+    return;
+  }
+
+  document.getElementById('docenteLabel').textContent = doc.nombre || 'Docente';
+  document.getElementById('docenteEmail').textContent = email;
+  document.getElementById('gateD').style.display='none';
+  document.getElementById('appD').style.display='block';
+  await cargarDatos();
+}
+
+async function enviarResetDocente(){
+  const email = document.getElementById('dEmail').value.trim().toLowerCase();
+  if(!email){ showErr('Escribe primero el correo docente.'); return; }
+  if(!email.endsWith('@tam.conalep.edu.mx')){ showErr('Usa un correo institucional @tam.conalep.edu.mx'); return; }
+  const {error} = await sb.auth.resetPasswordForEmail(email);
+  if(error){ showErr('No se pudo enviar recuperación: ' + error.message); return; }
+  showErr('Listo. Supabase intentó enviar recuperación al correo: ' + email);
+}
+
+function showErr(m){ const e=document.getElementById('gateErrD'); e.textContent=m; e.classList.add('show'); }
+async function logout(){ await sb.auth.signOut(); location.reload(); }
+
+/* ════ CARGA DE DATOS ════ */
+async function cargarDatos(){
+  document.getElementById('tablaBody').innerHTML='<tr><td colspan="9" class="empty-msg">Cargando datos desde la nube...</td></tr>';
+  const [{data:profs},{data:avs},{data:ents},{data:envs}] = await Promise.all([
+    sb.from('perfiles').select('*').in('grupo',['410','411']),
+    sb.from('avances').select('*').eq('cuaderno',CUADERNO),
+    sb.from('entregas').select('*').eq('cuaderno',CUADERNO),
+    sb.from('envios').select('*').eq('cuaderno',CUADERNO)
+  ]);
+
+  allData = (profs||[]).map(p=>{
+    const av = (avs||[]).find(a=>a.user_id===p.id);
+    const entA1 = (ents||[]).find(e=>e.user_id===p.id && e.actividad==='act1');
+    const entA2 = (ents||[]).find(e=>e.user_id===p.id && e.actividad==='act2');
+    const env   = (envs||[]).find(e=>e.user_id===p.id);
+    const vis   = av?.estado?.visitadas || [];
+    const pct   = Math.round((vis.length/13)*100);
+    const act1pts = entA1?.pts || 0;
+    const act2pts = entA2?.pts || 0;
+    const total   = env?.total || 0;
+    return { ...p, av, entA1, entA2, env, vis, pct, act1pts, act2pts, total };
+  });
+
+  filtrar();
+}
+
+/* ════ FILTROS + RENDER ════ */
+function filtrar(){
+  const grupo  = document.getElementById('fGrupo').value;
+  const buscar = document.getElementById('fBuscar').value.toLowerCase();
+  let lista = allData.filter(a=>{
+    if(grupo && a.grupo!==grupo) return false;
+    if(buscar && !a.nombre?.toLowerCase().includes(buscar) && !a.matricula?.toLowerCase().includes(buscar)) return false;
+    return true;
+  });
+  // Sort
+  lista.sort((a,b)=>{
+    const va=a[sortCol]||'', vb=b[sortCol]||'';
+    return sortAsc ? (va>vb?1:va<vb?-1:0) : (vb>va?1:vb<va?-1:0);
+  });
+  renderTabla(lista);
+  updateStats(lista);
+}
+
+function sortBy(col){ if(sortCol===col) sortAsc=!sortAsc; else{ sortCol=col; sortAsc=true; } filtrar(); }
+
+function renderTabla(lista){
+  const tbody = document.getElementById('tablaBody');
+  if(!lista.length){ tbody.innerHTML='<tr><td colspan="9" class="empty-msg">No hay alumnos que coincidan.</td></tr>'; return; }
+  tbody.innerHTML = lista.map(a=>{
+    const estado = a.env ? '<span class="badge enviado">✓ Enviado</span>'
+      : a.pct>0 ? '<span class="badge parcial">En progreso</span>'
+      : '<span class="badge sinini">Sin iniciar</span>';
+    return `<tr>
+      <td><strong>${esc(a.nombre||'—')}</strong><br><span class="mat">${esc(a.matricula||'—')}</span></td>
+      <td>${esc(a.grupo||'—')}</td>
+      <td>${esc(a.turno||'—')}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="prog-mini"><div class="prog-mini-fill" style="width:${a.pct}%"></div></div>
+          <span style="font-size:12px;font-family:var(--mono)">${a.pct}%</span>
+        </div>
+      </td>
+      <td><span class="score-num">${a.act1pts}</span><span style="font-size:12px;color:var(--gris)">/90</span></td>
+      <td><span class="score-num">${a.act2pts}</span><span style="font-size:12px;color:var(--gris)">/90</span></td>
+      <td><span class="score-num" style="font-size:16px">${a.env ? a.total : '—'}</span>${a.env?'<span style="font-size:12px;color:var(--gris)">/100</span>':''}</td>
+      <td>${estado}</td>
+      <td><button class="btn sm" onclick="verDetalle('${a.id}')">Ver</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateStats(lista){
+  const env = lista.filter(a=>a.env).length;
+  const noini = lista.filter(a=>!a.pct).length;
+  const prom = env ? Math.round(lista.filter(a=>a.env).reduce((s,a)=>s+(a.total||0),0)/env) : 0;
+  document.getElementById('stTotal').textContent = lista.length;
+  document.getElementById('stEnviados').textContent = `${env} / ${lista.length}`;
+  document.getElementById('stPromedio').textContent = env ? `${prom}/100` : '—';
+  document.getElementById('stSinIni').textContent = noini;
+}
+
+/* ════ MODAL DETALLE ════ */
+function verDetalle(uid){
+  const a = allData.find(x=>x.id===uid);
+  if(!a) return;
+  document.getElementById('modalTitle').textContent = a.nombre || 'Alumno';
+  const campos1 = a.entA1?.campos || {};
+  const campos2 = a.entA2?.campos || {};
+  document.getElementById('modalBody').innerHTML = `
+    <div class="detail-row"><span class="dk">Nombre</span><span class="dv">${esc(a.nombre||'—')}</span></div>
+    <div class="detail-row"><span class="dk">Matrícula</span><span class="dv" style="font-family:var(--mono)">${esc(a.matricula||'—')}</span></div>
+    <div class="detail-row"><span class="dk">Grupo / Turno</span><span class="dv">${esc(a.grupo||'—')} · ${esc(a.turno||'—')}</span></div>
+    <div class="detail-row"><span class="dk">Correo</span><span class="dv">${esc(a.email||'—')}</span></div>
+    <div class="detail-row"><span class="dk">Avance en cuaderno</span><span class="dv">${a.pct}% · ${a.vis?.length||0}/13 secciones</span></div>
+    <div class="detail-row"><span class="dk">Act. 1 RA 3.1</span><span class="dv">${a.act1pts}/90 pts</span></div>
+    <div class="detail-row"><span class="dk">Act. 2 RA 3.2</span><span class="dv">${a.act2pts}/90 pts</span></div>
+    <div class="detail-row"><span class="dk">Calificación final</span><span class="dv" style="font-size:16px;font-weight:700;color:var(--azul-osc)">${a.env ? a.total+'/100' : 'Sin enviar'}</span></div>
+    ${a.env ? `<div class="detail-row"><span class="dk">Folio de envío</span><span class="dv" style="font-family:var(--mono)">${esc(a.env.folio||'—')}</span></div>
+    <div class="detail-row"><span class="dk">Fecha de envío</span><span class="dv">${new Date(a.env.fecha).toLocaleString('es-MX')}</span></div>` : ''}
+    ${campos1.actB ? `<div class="resp-label">Act. 1 · Transacción SQL</div><div class="resp-block">${esc(campos1.actB)}</div>` : ''}
+    ${campos1.actC2 ? `<div class="resp-label">Act. 1 · Análisis de Deadlock</div><div class="resp-block">${esc(campos1.actC2)}</div>` : ''}
+    ${campos2.actB2 ? `<div class="resp-label">Act. 2 · SQL Usuarios y Roles</div><div class="resp-block">${esc(campos2.actB2)}</div>` : ''}
+    ${campos2.actC1b2 ? `<div class="resp-label">Act. 2 · Cifrado AES</div><div class="resp-block">${esc(campos2.actC1b2)}</div>` : ''}
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)">
+      <h4 style="font-size:13px;margin-bottom:10px;color:var(--gris)">⚙ Acciones del docente</h4>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn sm ghost" onclick="liberarAct('${uid}','act1')">Liberar Actividad 1</button>
+        <button class="btn sm ghost" onclick="liberarAct('${uid}','act2')">Liberar Actividad 2</button>
+        <button class="btn sm danger" onclick="darDeBaja('${uid}','${esc(a.nombre||'')}')">Dar de baja</button>
+      </div>
+    </div>`;
+  document.getElementById('modalBg').classList.add('open');
+}
+
+function closeModal(){ document.getElementById('modalBg').classList.remove('open'); }
+
+async function liberarAct(uid, act){
+  if(!confirm(`¿Liberar ${act} para este alumno?`)) return;
+  await sb.from('entregas').delete().eq('user_id',uid).eq('cuaderno',CUADERNO).eq('actividad',act);
+  alert('✅ Actividad liberada. El alumno puede reintentar.');
+  closeModal(); await cargarDatos();
+}
+
+async function darDeBaja(uid, nombre){
+  if(!confirm(`DAR DE BAJA a:\n${nombre}\n\nSe borrarán TODOS sus datos de COBD Unidad 3. ¿Continuar?`)) return;
+  await sb.from('envios').delete().eq('user_id',uid).eq('cuaderno',CUADERNO);
+  await sb.from('entregas').delete().eq('user_id',uid).eq('cuaderno',CUADERNO);
+  await sb.from('avances').delete().eq('user_id',uid).eq('cuaderno',CUADERNO);
+  alert('✅ Datos de COBD U3 borrados.');
+  closeModal(); await cargarDatos();
+}
+
+/* ════ EXPORTAR CSV ════ */
+function exportCSV(){
+  const grupo = document.getElementById('fGrupo').value;
+  let lista = allData.filter(a=>!grupo||a.grupo===grupo);
+  const header = 'Nombre,Matricula,Grupo,Turno,Avance,Act1_RA31,Act2_RA32,Total,Estado,Folio\n';
+  const rows = lista.map(a=>[
+    '"'+(a.nombre||'')+'","'+(a.matricula||'')+'","'+(a.grupo||'')+'","'+(a.turno||'')+'",',
+    a.pct+'%,',a.act1pts+',',a.act2pts+',',
+    (a.env?a.total:''),',',
+    a.env?'Enviado':a.pct?'En progreso':'Sin iniciar',',',
+    '"'+(a.env?.folio||'')+'"'
+  ].join(''));
+  const blob = new Blob([header+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url;
+  a.download=`COBD_U3_${grupo||'todos'}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+</script>
+</body>
+</html>
