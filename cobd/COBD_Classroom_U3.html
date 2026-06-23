@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>COBD · Unidad 3 · Aseguramiento de la información | CONALEP Classroom</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════
+   COBD CLASSROOM · UNIDAD 3 · DESIGN TOKENS
+   Tema: Azul profundo — diferenciado de PROO (púrpura)
+══════════════════════════════════════════════ */
+:root{
+  --azul:#0E7EC4;
+  --azul-osc:#065A8F;
+  --azul-tinte:#EAF4FC;
+  --azul-glow:rgba(14,126,196,.18);
+  --ink:#0F1E2D;
+  --gris:#4A5E6D;
+  --bg:#F4F8FB;
+  --surface:#FFFFFF;
+  --line:#D0E4F0;
+  --code-bg:#0A1929;
+  --code-ink:#CDD9E5;
+  --kw:#79C0FF;
+  --str:#FFD700;
+  --num:#7EE787;
+  --cm:#8B949E;
+  --fn:#D2A8FF;
+  --amber-bg:#FFF8E1;
+  --amber:#92400E;
+  --rojo:#B91C1C;
+  --rojo-bg:#FEF2F2;
+  --ok:#065F46;
+  --ok-bg:#ECFDF5;
+  --radius:12px;
+  --sans:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+  --shadow-sm:0 1px 3px rgba(14,126,196,.09),0 1px 2px rgba(14,126,196,.05);
+  --shadow-md:0 4px 16px rgba(14,126,196,.12),0 2px 6px rgba(14,126,196,.06);
+  --shadow-lg:0 10px 40px rgba(14,126,196,.16),0 4px 12px rgba(14,126,196,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.7;min-height:100vh;overflow-x:hidden}
+
+/* ACCENT BAR */
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#0E7EC4,#38BDF8,#0EA5E9,#0E7EC4);
+  background-size:200%;animation:gradbar 4s linear infinite;z-index:300}
+@keyframes gradbar{0%{background-position:0%}100%{background-position:200%}}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:272px;min-width:272px;background:var(--surface);
+  border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;bottom:0;z-index:200;
+  box-shadow:var(--shadow-sm);
+}
+.brand{
+  padding:20px 18px 16px;
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;
+  background:linear-gradient(180deg,#fff,#F4F8FB);
+}
+.logo-mark{
+  width:40px;height:40px;border-radius:10px;flex-shrink:0;
+  background:linear-gradient(135deg,#0E7EC4,#38BDF8);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;
+  letter-spacing:-.5px;box-shadow:0 2px 8px rgba(14,126,196,.35);
+}
+.brand-text h1{font-size:14px;font-weight:700;color:var(--ink);line-height:1.2}
+.brand-text p{font-size:11px;color:var(--gris);margin-top:1px}
+
+/* progress */
+.prog-wrap{padding:12px 18px;border-bottom:1px solid var(--line)}
+.prog-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.prog-label span{font-size:11px;color:var(--gris)}
+.prog-label strong{font-size:12px;color:var(--azul);font-family:var(--mono)}
+.prog-bar{height:5px;background:var(--line);border-radius:999px;overflow:hidden}
+.prog-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#0E7EC4,#38BDF8);transition:width .6s cubic-bezier(.4,0,.2,1);width:0%}
+
+/* TOC */
+.toc{flex:1;overflow-y:auto;padding:10px 0}
+.toc-group{
+  font-family:var(--mono);font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:1.4px;color:var(--gris);
+  padding:12px 18px 4px;
+}
+.toc a{
+  display:flex;align-items:center;gap:10px;padding:7px 18px;
+  font-size:13px;color:var(--gris);text-decoration:none;cursor:pointer;
+  transition:background .15s,color .15s;border-right:3px solid transparent;
+}
+.toc a:hover{background:var(--azul-tinte);color:var(--azul-osc)}
+.toc a.active{
+  background:linear-gradient(135deg,var(--azul-tinte),#E0F0FA);
+  color:var(--azul-osc);font-weight:600;border-right:3px solid var(--azul);
+}
+.toc a.done .dot{
+  background:linear-gradient(135deg,var(--azul),#38BDF8);
+  border-color:var(--azul);box-shadow:0 0 6px rgba(14,126,196,.4);
+}
+.dot{
+  width:8px;height:8px;border-radius:50%;border:2px solid var(--line);
+  flex-shrink:0;background:transparent;transition:all .2s;
+}
+.sidebar-foot{
+  padding:12px 18px;border-top:1px solid var(--line);
+  font-size:11px;color:var(--gris);line-height:1.5;
+}
+
+/* ── MAIN ── */
+.main{margin-left:272px;flex:1;min-height:100vh;padding:32px 40px 80px}
+.page{display:none;max-width:820px;animation:fadeIn .25s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* eyebrow */
+.eyebrow{
+  display:inline-block;background:var(--azul-tinte);padding:4px 12px;
+  border-radius:99px;border:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;color:var(--azul-osc);
+  font-weight:600;letter-spacing:.3px;margin-bottom:14px;
+}
+h2.page-title{
+  font-size:clamp(22px,3vw,30px);font-weight:700;line-height:1.2;
+  margin-bottom:18px;
+  background:linear-gradient(135deg,#065A8F,#0E7EC4);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+
+/* ── CARDS ── */
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow-sm);
+  transition:box-shadow .2s;
+}
+.card:hover{box-shadow:var(--shadow-md)}
+.card h3{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.card h4{font-size:14px;font-weight:700;color:var(--azul-osc);margin-bottom:8px}
+p{font-size:15px;color:var(--gris);margin-bottom:12px;line-height:1.7}
+p:last-child{margin-bottom:0}
+
+/* concept grid */
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px}
+.concept-box{
+  border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;
+  background:linear-gradient(135deg,#F4F8FB,#fff);box-shadow:var(--shadow-sm);
+}
+.cb-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--azul);font-weight:700;margin-bottom:5px;font-family:var(--mono)}
+.cb-title{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.cb-body{font-size:13.5px;color:var(--gris);line-height:1.6}
+
+/* ACID cards */
+.acid-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.acid-card{border-radius:var(--radius);padding:16px 14px;text-align:center;border:1px solid}
+.acid-card .acid-letter{font-family:var(--mono);font-size:28px;font-weight:700;line-height:1;margin-bottom:6px}
+.acid-card .acid-name{font-size:12px;font-weight:700;margin-bottom:4px}
+.acid-card .acid-def{font-size:11.5px;line-height:1.5}
+.acid-card.a{background:#EEF2FF;border-color:#C7D2FE;color:#3730A3}.acid-card.a .acid-letter{color:#4338CA}
+.acid-card.c{background:#ECFDF5;border-color:#A7F3D0;color:#065F46}.acid-card.c .acid-letter{color:#059669}
+.acid-card.i{background:#FFF7ED;border-color:#FED7AA;color:#92400E}.acid-card.i .acid-letter{color:#D97706}
+.acid-card.d{background:#FDF2F8;border-color:#F5D0FE;color:#6B21A8}.acid-card.d .acid-letter{color:#9333EA}
+
+/* callout */
+.callout{border-radius:var(--radius);padding:16px 18px;margin-bottom:16px;border:1px solid}
+.callout.info{background:#EAF4FC;border-color:#BAD9F2;border-left:4px solid var(--azul)}
+.callout.info .c-title::before{content:'💡 '}
+.callout.warn{background:var(--amber-bg);border-color:#FDE68A;border-left:4px solid #F59E0B}
+.callout.warn .c-title::before{content:'⚠️ '}
+.callout.ok{background:var(--ok-bg);border-color:#6EE7B7;border-left:4px solid #059669}
+.callout.ok .c-title::before{content:'✅ '}
+.callout.danger{background:var(--rojo-bg);border-color:#FECACA;border-left:4px solid var(--rojo)}
+.callout.danger .c-title::before{content:'🚨 '}
+.c-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.callout p{font-size:13.5px;margin-bottom:0}
+
+/* kcheck — ANTES de actividades */
+.kcheck{
+  background:linear-gradient(135deg,var(--amber-bg),#FFFBF0);
+  border:1px solid #FDE68A;border-left:4px solid #F59E0B;
+  border-radius:var(--radius);padding:16px 20px;margin:0 0 20px;
+}
+.kc-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:#92400E;margin-bottom:8px;display:flex;align-items:center;gap:8px;font-family:var(--mono)}
+.kcheck p{font-size:14px;color:#78350F;margin:0}
+
+/* SYNTAX BLOCKS */
+pre.sql{
+  background:var(--code-bg);color:var(--code-ink);
+  border-radius:var(--radius);padding:18px 20px;
+  font-family:var(--mono);font-size:13px;line-height:1.75;
+  overflow-x:auto;margin-bottom:16px;border:1px solid #1E3A5F;
+  position:relative;
+}
+pre.sql .kw{color:var(--kw);font-weight:600}
+pre.sql .fn{color:var(--fn)}
+pre.sql .str{color:var(--str)}
+pre.sql .num{color:var(--num)}
+pre.sql .cm{color:var(--cm);font-style:italic}
+pre.sql .t{color:#FFA657}
+.code-label{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;
+  background:rgba(14,126,196,.08);border:1px solid var(--line);
+  border-radius:6px;padding:4px 12px;font-family:var(--mono);font-size:11px;color:var(--gris);
+}
+.code-label::before{content:'';width:8px;height:8px;border-radius:50%;background:#0E7EC4;display:inline-block}
+
+/* inline code */
+code.inline{
+  background:rgba(14,126,196,.08);border:1px solid var(--line);
+  border-radius:5px;padding:1px 6px;font-family:var(--mono);font-size:13px;color:var(--azul-osc);
+}
+
+/* lists */
+.list{list-style:none;padding:0;margin-bottom:14px}
+.list li{padding:5px 0 5px 20px;font-size:14.5px;color:var(--gris);position:relative;border-bottom:1px solid var(--line)}
+.list li:last-child{border-bottom:none}
+.list li::before{content:'▸';position:absolute;left:0;color:var(--azul);font-size:12px}
+.list.check li::before{content:'✓';color:var(--ok)}
+.list.cross li::before{content:'✗';color:var(--rojo)}
+
+/* table */
+table.data{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13.5px}
+table.data th{
+  background:linear-gradient(180deg,#EAF4FC,#D9EDFA);color:var(--azul-osc);
+  font-weight:700;padding:10px 13px;text-align:left;letter-spacing:.2px;
+  border-bottom:2px solid var(--azul);
+}
+table.data td{padding:9px 13px;border-bottom:1px solid var(--line);color:var(--gris);vertical-align:top}
+table.data tr:hover td{background:#F4F8FB}
+table.data tr:last-child td{border-bottom:none}
+
+/* flow diagram */
+.flow{display:flex;align-items:center;gap:0;margin:16px 0 20px;flex-wrap:wrap}
+.flow-step{
+  background:var(--azul-tinte);border:2px solid var(--azul);border-radius:10px;
+  padding:10px 14px;text-align:center;min-width:100px;font-size:12.5px;font-weight:600;
+  color:var(--azul-osc);line-height:1.3;
+}
+.flow-step.ok{background:var(--ok-bg);border-color:#059669;color:#065F46}
+.flow-step.red{background:var(--rojo-bg);border-color:var(--rojo);color:var(--rojo)}
+.flow-arrow{font-size:20px;color:var(--azul);padding:0 5px}
+
+/* ── SIMULADOR SQL ── */
+.sim-wrap{background:var(--code-bg);border-radius:var(--radius);border:1px solid #1E3A5F;overflow:hidden;margin-bottom:16px}
+.sim-toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:#0D2137;border-bottom:1px solid #1E3A5F;
+  flex-wrap:wrap;gap:8px;
+}
+.sim-title{font-family:var(--mono);font-size:12px;color:var(--cm);display:flex;align-items:center;gap:8px}
+.sim-title::before{content:'';width:8px;height:8px;border-radius:50%;background:#3FB950;display:inline-block;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sim-tabs{display:flex;gap:4px}
+.sim-tab{
+  font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:5px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  color:var(--cm);cursor:pointer;transition:all .15s;
+}
+.sim-tab.active{background:rgba(14,126,196,.25);border-color:rgba(14,126,196,.5);color:#79C0FF}
+.sim-tab:hover:not(.active){background:rgba(255,255,255,.1)}
+.sim-editor{
+  display:flex;min-height:160px;
+}
+.sim-gutter{
+  min-width:42px;background:#0D2137;border-right:1px solid #1E3A5F;
+  padding:14px 0;text-align:right;
+  font-family:var(--mono);font-size:13px;color:#3D546A;line-height:1.75;
+  user-select:none;
+}
+.sim-gutter span{display:block;padding-right:10px}
+textarea.sim-code{
+  flex:1;background:transparent;color:var(--code-ink);
+  font-family:var(--mono);font-size:13px;line-height:1.75;
+  padding:14px 16px;border:none;outline:none;resize:none;
+  min-height:160px;
+}
+.sim-actions{
+  display:flex;gap:8px;padding:10px 16px;background:#0D2137;border-top:1px solid #1E3A5F;
+  flex-wrap:wrap;align-items:center;
+}
+.btn-run{
+  background:linear-gradient(135deg,#0E7EC4,#0EA5E9);color:#fff;border:none;
+  border-radius:7px;padding:8px 20px;font-family:var(--mono);font-size:12px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;letter-spacing:.3px;
+}
+.btn-run:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(14,126,196,.4)}
+.btn-run:active{transform:none}
+.btn-clear{
+  background:transparent;color:var(--cm);border:1px solid rgba(255,255,255,.12);
+  border-radius:7px;padding:8px 14px;font-family:var(--mono);font-size:12px;
+  cursor:pointer;transition:all .15s;
+}
+.btn-clear:hover{border-color:rgba(255,255,255,.25);color:#fff}
+.sim-schema-btn{
+  margin-left:auto;background:rgba(14,126,196,.15);color:#79C0FF;
+  border:1px solid rgba(14,126,196,.3);border-radius:7px;
+  padding:8px 14px;font-family:var(--mono);font-size:12px;cursor:pointer;transition:all .15s;
+}
+.sim-schema-btn:hover{background:rgba(14,126,196,.25)}
+.sim-out{
+  border-top:1px solid #1E3A5F;padding:14px 16px;min-height:48px;
+  font-family:var(--mono);font-size:12.5px;line-height:1.65;color:var(--code-ink);
+  white-space:pre-wrap;max-height:280px;overflow-y:auto;
+}
+.sim-out .ok-line{color:#7EE787}
+.sim-out .err-line{color:#FF7B72}
+.sim-out .head-line{color:#79C0FF;font-weight:700;border-bottom:1px solid #1E3A5F;margin-bottom:4px;padding-bottom:4px}
+.sim-out .sep{color:#3D546A}
+.sim-out .muted{color:var(--cm)}
+.schema-panel{
+  display:none;padding:14px 16px;background:#061220;
+  border-top:1px solid #1E3A5F;font-family:var(--mono);font-size:12px;
+  color:var(--cm);max-height:220px;overflow-y:auto;
+}
+.schema-panel.open{display:block}
+.schema-table-name{color:#79C0FF;font-weight:700;margin-top:10px;margin-bottom:4px}
+.schema-table-name:first-child{margin-top:0}
+.schema-col{color:var(--code-ink);margin-left:14px}
+.schema-col .col-type{color:var(--str)}
+
+/* ── ACTIVIDADES ── */
+.act-meta{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:20px;
+}
+.badge{
+  font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 12px;
+  border-radius:99px;letter-spacing:.2px;
+}
+.badge.pts{background:linear-gradient(135deg,#0A2C45,#0E4A6E);color:#fff;border:none}
+.badge.mod{background:var(--azul-tinte);color:var(--azul-osc);border:1px solid var(--line)}
+.badge.ra{background:var(--ok-bg);color:var(--ok);border:1px solid #A7F3D0}
+
+/* enunciado */
+.enunciado{
+  background:linear-gradient(135deg,var(--azul-tinte) 0%,#F0F8FD 60%,#fff 100%);
+  border-left:4px solid var(--azul);border-radius:var(--radius);
+  padding:18px 20px;margin-bottom:18px;box-shadow:var(--shadow-sm);
+}
+.et{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;
+  color:var(--azul);margin-bottom:8px;font-family:var(--mono)}
+p.prob{font-size:14.5px;color:var(--ink);margin:0;line-height:1.65}
+
+/* question blocks */
+.q-block{margin-bottom:24px}
+.q-label{
+  font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.q-pts{font-family:var(--mono);font-size:11px;color:var(--azul);
+  background:var(--azul-tinte);padding:2px 8px;border-radius:99px;font-weight:700}
+.q-block select,.q-block input[type="text"],.q-block textarea{
+  width:100%;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:14px;color:var(--ink);
+  background:var(--surface);padding:10px 13px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.q-block select:focus,.q-block input[type="text"]:focus,.q-block textarea:focus{
+  border-color:var(--azul);box-shadow:0 0 0 3px rgba(14,126,196,.12);
+}
+.q-block textarea{resize:vertical;min-height:90px;font-size:13.5px;line-height:1.65}
+.radio-group,.check-group{display:flex;flex-direction:column;gap:8px}
+.radio-opt,.check-opt{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 14px;
+  border:1px solid var(--line);border-radius:8px;cursor:pointer;
+  transition:border-color .2s,background .2s;font-size:14px;
+}
+.radio-opt:hover,.check-opt:hover{border-color:var(--azul);background:var(--azul-tinte)}
+.radio-opt input,.check-opt input{margin-top:2px;accent-color:var(--azul)}
+.radio-opt.correct{border-color:#059669;background:var(--ok-bg)}
+.radio-opt.wrong{border-color:var(--rojo);background:var(--rojo-bg)}
+
+/* feedback */
+.fb{border-radius:8px;padding:12px 14px;margin-top:8px;font-size:13px;display:none}
+.fb.ok{background:var(--ok-bg);border:1px solid #6EE7B7;color:var(--ok)}
+.fb.err{background:var(--rojo-bg);border:1px solid #FECACA;color:var(--rojo)}
+.fb.show{display:block}
+
+/* save note */
+.save-note{
+  font-size:12px;color:var(--azul);margin-top:6px;opacity:0;transition:opacity .3s;
+  font-family:var(--mono);
+}
+.save-note.show{opacity:1;animation:pop .3s ease}
+@keyframes pop{0%{transform:scale(0.8)}60%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+/* check btn */
+.btn-check{
+  background:var(--azul-tinte);color:var(--azul-osc);border:1px solid var(--line);
+  border-radius:8px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .15s;margin-top:10px;font-family:var(--sans);
+}
+.btn-check:hover{background:var(--azul);color:#fff;border-color:var(--azul)}
+
+/* ── SCORE HERO ── */
+.score-hero{
+  background:linear-gradient(135deg,#084F75,#0E7EC4,#0EA5E9);
+  border-radius:var(--radius);padding:32px;text-align:center;margin-bottom:24px;
+  color:#fff;
+}
+.score-hero .score-n{
+  font-family:var(--mono);font-size:64px;font-weight:700;line-height:1;
+  margin-bottom:6px;
+}
+.score-hero .score-label{font-size:14px;opacity:.8;margin-bottom:16px}
+.score-hero .score-sub{font-size:13px;opacity:.65}
+
+/* ── PAGER ── */
+.pager{display:flex;justify-content:space-between;align-items:center;margin-top:32px;gap:10px;flex-wrap:wrap}
+
+/* ── BUTTONS ── */
+.btn{
+  background:linear-gradient(135deg,#0E7EC4,#0EA5E9);color:#fff;border:none;
+  border-radius:8px;padding:11px 24px;font-family:var(--sans);font-size:14px;
+  font-weight:600;cursor:pointer;transition:all .15s;letter-spacing:.2px;
+}
+.btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 14px rgba(14,126,196,.4)}
+.btn:active:not(:disabled){transform:none}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.ghost{
+  background:transparent;color:var(--azul-osc);
+  border:1px solid var(--line);
+}
+.btn.ghost:hover{background:var(--azul-tinte);border-color:var(--azul)}
+.btn.danger{background:linear-gradient(135deg,#B91C1C,#DC2626)}
+.btn.danger:hover{box-shadow:0 4px 14px rgba(185,28,28,.4)}
+
+/* ── BITÁCORA ── */
+.bit-q{margin-bottom:20px}
+.bit-q label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px}
+.bit-q textarea{
+  width:100%;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:14px;color:var(--ink);
+  background:var(--surface);padding:12px 14px;outline:none;resize:vertical;min-height:100px;
+  transition:border-color .2s,box-shadow .2s;line-height:1.65;
+}
+.bit-q textarea:focus{border-color:var(--azul);box-shadow:0 0 0 3px rgba(14,126,196,.12)}
+
+/* ── GATE (pantalla de login) ── */
+.gate{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 0%,rgba(14,126,196,.12),transparent),
+    radial-gradient(ellipse 50% 50% at 90% 100%,rgba(56,189,248,.08),transparent),
+    #0A1929;
+  padding:20px;
+}
+.gate-card{
+  background:#fff;border-radius:20px;max-width:440px;width:100%;
+  overflow:hidden;box-shadow:0 40px 100px rgba(14,126,196,.35);
+}
+.gate-brand{
+  background:linear-gradient(160deg,#043556,#0E7EC4,#0EA5E9);
+  padding:32px 32px 28px;text-align:center;
+}
+.gate-logo{
+  width:52px;height:52px;border-radius:14px;
+  background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+  font-family:var(--mono);font-size:13px;font-weight:700;color:#fff;
+}
+.gate-brand h2{color:#fff;font-size:20px;margin-bottom:4px}
+.gate-brand p{color:rgba(255,255,255,.7);font-size:13px}
+.gate-body{padding:28px 32px 32px}
+.gate-body h3{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.g-list{list-style:none;margin-bottom:22px}
+.g-list li{
+  padding:6px 0 6px 22px;font-size:13.5px;color:var(--gris);
+  position:relative;border-bottom:1px solid var(--line);
+}
+.g-list li:last-child{border-bottom:none}
+.g-list li::before{content:'✓';position:absolute;left:0;color:var(--ok);font-weight:700;font-size:12px}
+.g-tabs{display:flex;border-bottom:1px solid var(--line);margin-bottom:20px}
+.g-tab{
+  flex:1;text-align:center;padding:11px;font-size:14px;font-weight:600;
+  color:var(--gris);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;
+}
+.g-tab.active{color:var(--azul);border-bottom-color:var(--azul)}
+.g-form{display:none}.g-form.active{display:block}
+.g-field{margin-bottom:14px}
+.g-field label{display:block;font-size:12px;font-weight:700;color:var(--gris);margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.g-field input,.g-field select{
+  width:100%;border:1px solid var(--line);border-radius:8px;
+  font-family:var(--sans);font-size:14px;color:var(--ink);
+  padding:11px 13px;outline:none;transition:border-color .2s,box-shadow .2s;
+}
+.g-field input:focus,.g-field select:focus{
+  border-color:var(--azul);box-shadow:0 0 0 3px rgba(14,126,196,.12);
+}
+.gate-footer{text-align:center;font-size:12px;color:var(--gris);margin-top:14px}
+.gate-error{
+  background:var(--rojo-bg);border:1px solid #FECACA;border-radius:8px;
+  padding:10px 13px;font-size:13px;color:var(--rojo);margin-bottom:12px;display:none;
+}
+.gate-error.show{display:block}
+
+/* ── FOLIO / BOLETA ── */
+.folio-box{
+  border:2px solid var(--azul);border-radius:var(--radius);padding:20px 22px;
+  background:var(--azul-tinte);margin-bottom:18px;text-align:center;
+}
+.folio-box .folio-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gris);font-family:var(--mono)}
+.folio-box .folio-num{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--azul-osc);letter-spacing:2px;margin:6px 0 2px}
+.folio-box .folio-sub{font-size:12px;color:var(--gris)}
+
+/* ── LOCKED OVERLAY ── */
+.locked-banner{
+  background:linear-gradient(135deg,#0A2C45,#0E4A6E);
+  border-radius:var(--radius);padding:18px 22px;margin-bottom:20px;
+  color:#fff;display:flex;align-items:center;gap:14px;
+}
+.locked-icon{font-size:28px;flex-shrink:0}
+.locked-banner h4{font-size:15px;font-weight:700;margin-bottom:3px}
+.locked-banner p{font-size:13px;opacity:.75;margin:0}
+.unlock-row{display:flex;gap:8px;margin-top:10px}
+.unlock-row input{
+  flex:1;border:1px solid rgba(255,255,255,.2);border-radius:7px;
+  background:rgba(255,255,255,.1);color:#fff;padding:8px 12px;
+  font-family:var(--mono);font-size:13px;outline:none;
+}
+.unlock-row input::placeholder{color:rgba(255,255,255,.4)}
+
+/* ── DESBLOQUEO DOCENTE ── */
+.admin-section{
+  border-top:1px solid var(--line);margin-top:28px;padding-top:20px;
+}
+.admin-section h4{font-size:13px;font-weight:700;color:var(--gris);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px;font-family:var(--mono)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{display:none}
+  .main{margin-left:0;padding:20px 16px 60px}
+  .acid-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:600px){
+  .acid-grid{grid-template-columns:1fr 1fr}
+  .concept-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════ -->
+<!--  GATE — Pantalla de acceso                  -->
+<!-- ════════════════════════════════════════════ -->
+<div id="gateScreen" class="gate">
+  <div class="gate-card">
+    <div class="gate-brand">
+      <div class="gate-logo">SQL</div>
+      <h2>COBD Classroom</h2>
+      <p>Unidad 3 · Aseguramiento de la información</p>
+    </div>
+    <div class="gate-body">
+      <h3>Ingresa a tu cuaderno digital</h3>
+      <ul class="g-list">
+        <li>Unidad 3 · RA 3.1 + RA 3.2 · Evidencias (20% del módulo)</li>
+        <li>Transacciones, ACID, bloqueo, concurrencia y control de acceso</li>
+        <li>Simulador MySQL integrado — ejecuta SQL real en el navegador</li>
+        <li>Tu avance se guarda en la nube ☁ desde cualquier equipo</li>
+      </ul>
+      <div class="gate-error" id="gateError"></div>
+      <div class="g-tabs">
+        <div class="g-tab active" onclick="switchTab('login')">Iniciar sesión</div>
+        <div class="g-tab" onclick="switchTab('registro')">Crear mi cuenta</div>
+      </div>
+      <!-- LOGIN -->
+      <div class="g-form active" id="formLogin">
+        <div class="g-field"><label>Correo institucional</label><input type="email" id="loginEmail" placeholder="12345@tam.conalep.edu.mx"></div>
+        <div class="g-field"><label>Contraseña</label><input type="password" id="loginPass" placeholder="Tu contraseña"></div>
+        <button class="btn" style="width:100%" onclick="doLogin()">Entrar al cuaderno →</button>
+      </div>
+      <!-- REGISTRO -->
+      <div class="g-form" id="formRegistro">
+        <div class="g-field"><label>Nombre completo</label><input type="text" id="regNombre" placeholder="Nombre como aparece en lista"></div>
+        <div class="g-field"><label>Correo institucional</label><input type="email" id="regEmail" placeholder="12345@tam.conalep.edu.mx"></div>
+        <div class="g-field"><label>Matrícula</label><input type="text" id="regMatricula" placeholder="P24XXXXXX"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="g-field"><label>Grupo</label>
+            <select id="regGrupo"><option value="">—</option><option>410</option><option>411</option></select>
+          </div>
+          <div class="g-field"><label>Turno</label>
+            <select id="regTurno"><option value="">—</option><option>Matutino</option><option>Vespertino</option></select>
+          </div>
+        </div>
+        <div class="g-field"><label>Contraseña</label><input type="password" id="regPass" placeholder="Mínimo 8 caracteres"></div>
+        <button class="btn" style="width:100%" onclick="doRegistro()">Crear mi cuenta →</button>
+      </div>
+      <p class="gate-footer">COBD-20 · Grupos 410 / 411 · CONALEP Ext. Nuevo Progreso</p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!--  APP — Shell con sidebar + main             -->
+<!-- ════════════════════════════════════════════ -->
+<div id="appShell" class="shell" style="display:none">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="brand">
+      <div class="logo-mark">SQL</div>
+      <div class="brand-text">
+        <h1>COBD Classroom</h1>
+        <p>Unidad 3 · Aseguramiento</p>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-label"><span>Mi progreso</span><strong id="progPct">0%</strong></div>
+      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+    </div>
+    <div class="toc" id="tocEl">
+      <div class="toc-group">🚀 Inicio</div>
+      <a data-sec="intro" class="active"><span class="dot"></span>1 · Presentación de la Unidad</a>
+      <div class="toc-group">📚 Teoría — lee primero</div>
+      <a data-sec="acid"><span class="dot"></span>2 · Transacciones y ACID</a>
+      <a data-sec="bloqueo"><span class="dot"></span>3 · Protocolo 2PL</a>
+      <a data-sec="concurrencia"><span class="dot"></span>4 · Concurrencia y Deadlock</a>
+      <a data-sec="ejemplo1"><span class="dot"></span>5 · Ejemplo guiado — Transacciones</a>
+      <a data-sec="acceso"><span class="dot"></span>6 · Control de acceso</a>
+      <a data-sec="cifrado"><span class="dot"></span>7 · Cifrado y respaldos</a>
+      <a data-sec="ejemplo2"><span class="dot"></span>8 · Ejemplo guiado — Seguridad</a>
+      <div class="toc-group">✏️ Actividades (20% del módulo)</div>
+      <a data-sec="act1"><span class="dot"></span>9 · Act. 1 · Transacciones RA 3.1</a>
+      <a data-sec="act2"><span class="dot"></span>10 · Act. 2 · Control de acceso RA 3.2</a>
+      <div class="toc-group">💻 Laboratorio libre</div>
+      <a data-sec="simulador"><span class="dot"></span>11 · Simulador MySQL</a>
+      <div class="toc-group">📋 Cierre</div>
+      <a data-sec="bitacora"><span class="dot"></span>12 · Bitácora del alumno</a>
+      <a data-sec="evaluacion"><span class="dot"></span>13 · Evaluación final</a>
+    </div>
+    <div class="sidebar-foot" style="font-size:11px">
+      📌 COBD-20 · Unidad 3<br>
+      <span style="color:var(--azul);font-weight:600">Aseguramiento de la información</span><br>
+      RA 3.1 + RA 3.2 · <strong>20%</strong> del módulo
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ══ SEC 1: INTRO ══ -->
+    <section class="page active" id="sec-intro">
+      <div class="eyebrow">Sección 1 · Introducción</div>
+      <h2 class="page-title">Unidad 3 · Aseguramiento de la información</h2>
+
+      <div class="callout info"><div class="c-title">Cómo usar este cuaderno</div>
+        <p><strong>Primero lee toda la teoría</strong> en orden (Secciones 2 al 8). Antes de cada actividad verás un recuadro amarillo que te dice exactamente qué secciones necesitas dominar. El simulador MySQL está disponible en cualquier momento para practicar.</p>
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-box" style="border-top:4px solid #0E7EC4">
+          <div class="cb-label">RA 3.1 · 16 horas</div>
+          <div class="cb-title">🔄 Transacciones</div>
+          <div class="cb-body">Protocolo ACID, bloqueo en dos fases (2PL), recuperación de información y control de concurrencia entre usuarios simultáneos.</div>
+        </div>
+        <div class="concept-box" style="border-top:4px solid #059669">
+          <div class="cb-label">RA 3.2 · 10 horas</div>
+          <div class="cb-title">🔒 Seguridad</div>
+          <div class="cb-body">Control de acceso con usuarios, roles y privilegios (<code class="inline">GRANT/REVOKE</code>). Cifrado de datos y estrategias de respaldo incremental y completo.</div>
+        </div>
+        <div class="concept-box" style="border-top:4px solid #D97706">
+          <div class="cb-label">Proyecto integrador</div>
+          <div class="cb-title">🏢 Sistema Empresa</div>
+          <div class="cb-body">Trabajarás con una base de datos <code class="inline">empresa_cobd</code> preinstalada en el simulador: empleados, departamentos, productos y órdenes de compra.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>¿Por qué importa la Unidad 3?</h3>
+        <p>En la vida real, las bases de datos las usan muchos usuarios al mismo tiempo: cajeros, vendedores, administrativos. Sin <strong>control de transacciones</strong>, dos usuarios podrían modificar el mismo registro simultáneamente y corromper los datos. Sin <strong>control de acceso</strong>, cualquier usuario podría borrar información crítica o ver datos confidenciales.</p>
+        <p>Esta unidad te da las herramientas que usan los administradores de bases de datos profesionales (DBA) para garantizar que la información sea <strong>íntegra</strong>, <strong>consistente</strong> y <strong>segura</strong>.</p>
+      </div>
+
+      <table class="data">
+        <tr><th>Resultado</th><th>Tema central</th><th>Horas</th><th>Ponderación</th></tr>
+        <tr><td><strong>RA 3.1</strong></td><td>Transacciones, ACID, 2PL, Concurrencia</td><td>16 hrs</td><td><strong>10%</strong></td></tr>
+        <tr><td><strong>RA 3.2</strong></td><td>Control de acceso, cifrado, respaldos</td><td>10 hrs</td><td><strong>10%</strong></td></tr>
+        <tr><td colspan="2"><strong>Total Unidad 3</strong></td><td>26 hrs</td><td><strong>20%</strong></td></tr>
+      </table>
+
+      <div class="pager"><span></span><button class="btn" onclick="go('acid')">Empezar: Transacciones y ACID →</button></div>
+    </section>
+
+    <!-- ══ SEC 2: ACID ══ -->
+    <section class="page" id="sec-acid">
+      <div class="eyebrow">Sección 2 · Teoría</div>
+      <h2 class="page-title">Transacciones y propiedades ACID</h2>
+
+      <div class="card">
+        <h3>¿Qué es una transacción?</h3>
+        <p>Una <strong>transacción</strong> es una secuencia de operaciones SQL que se ejecutan como una sola unidad indivisible. O todas se completan exitosamente (<code class="inline">COMMIT</code>), o ninguna tiene efecto (<code class="inline">ROLLBACK</code>). No existe término medio.</p>
+        <p><strong>Ejemplo clásico:</strong> transferencia bancaria. Se descuenta de cuenta A y se abona en cuenta B. Si el sistema falla entre medio, el banco no puede quedarse con el dinero en el aire — ambas operaciones deben ocurrir juntas o ninguna.</p>
+      </div>
+
+      <div class="acid-grid">
+        <div class="acid-card a">
+          <div class="acid-letter">A</div>
+          <div class="acid-name">Atomicidad</div>
+          <div class="acid-def">Todo o nada. Si una operación falla, todas las anteriores se deshacen con ROLLBACK.</div>
+        </div>
+        <div class="acid-card c">
+          <div class="acid-letter">C</div>
+          <div class="acid-name">Consistencia</div>
+          <div class="acid-def">La BD pasa de un estado válido a otro. Las restricciones de integridad siempre se cumplen.</div>
+        </div>
+        <div class="acid-card i">
+          <div class="acid-letter">I</div>
+          <div class="acid-name">Aislamiento</div>
+          <div class="acid-def">Las transacciones concurrentes no se "ven" entre sí hasta que hacen COMMIT.</div>
+        </div>
+        <div class="acid-card d">
+          <div class="acid-letter">D</div>
+          <div class="acid-name">Durabilidad</div>
+          <div class="acid-def">Una vez con COMMIT, los cambios permanecen aunque el servidor se reinicie o falle.</div>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:12px;font-size:17px">Sintaxis básica en MySQL</h3>
+      <div class="code-label">MySQL · transaccion_transferencia.sql</div>
+      <pre class="sql"><span class="cm">-- Estructura básica de una transacción</span>
+<span class="kw">START TRANSACTION</span>;  <span class="cm">-- o BEGIN;</span>
+
+  <span class="cm">-- Operaciones que forman la unidad</span>
+  <span class="kw">UPDATE</span> <span class="t">cuentas</span> <span class="kw">SET</span> saldo = saldo - <span class="num">1000</span> <span class="kw">WHERE</span> id = <span class="num">1</span>;
+  <span class="kw">UPDATE</span> <span class="t">cuentas</span> <span class="kw">SET</span> saldo = saldo + <span class="num">1000</span> <span class="kw">WHERE</span> id = <span class="num">2</span>;
+
+<span class="kw">COMMIT</span>;  <span class="cm">-- Confirmar: los cambios son permanentes</span>
+
+<span class="cm">-- Si algo falla, se usa:</span>
+<span class="kw">ROLLBACK</span>;  <span class="cm">-- Deshacer: ningún cambio se aplica</span></pre>
+
+      <div class="callout warn"><div class="c-title">Punto clave para la actividad</div>
+        <p>En MySQL, las transacciones solo funcionan con tablas de tipo <strong>InnoDB</strong> (el motor por defecto). Las tablas <strong>MyISAM</strong> <em>no soportan</em> transacciones — hacen los cambios inmediatamente y no hay rollback posible.</p>
+      </div>
+
+      <h3 style="margin-bottom:12px;font-size:17px">SAVEPOINT — puntos de control intermedios</h3>
+      <div class="code-label">MySQL · savepoints.sql</div>
+      <pre class="sql"><span class="kw">START TRANSACTION</span>;
+  <span class="kw">INSERT INTO</span> <span class="t">pedidos</span> VALUES (<span class="num">1</span>, <span class="str">'Laptop'</span>, <span class="num">15000</span>);
+
+  <span class="kw">SAVEPOINT</span> sp_pedido;  <span class="cm">-- punto de guardado parcial</span>
+
+  <span class="kw">INSERT INTO</span> <span class="t">detalles</span> VALUES (<span class="num">1</span>, <span class="str">'Intel i7'</span>);
+  <span class="cm">-- Si este INSERT falla:</span>
+  <span class="kw">ROLLBACK TO SAVEPOINT</span> sp_pedido;  <span class="cm">-- vuelve solo hasta aquí</span>
+  <span class="cm">-- El pedido se mantiene, solo el detalle se cancela</span>
+
+<span class="kw">COMMIT</span>;</pre>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('intro')">← Introducción</button>
+        <button class="btn" onclick="go('bloqueo')">3 · Protocolo 2PL →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 3: BLOQUEO 2PL ══ -->
+    <section class="page" id="sec-bloqueo">
+      <div class="eyebrow">Sección 3 · Teoría</div>
+      <h2 class="page-title">Protocolo de bloqueo en dos fases (2PL)</h2>
+
+      <div class="card">
+        <h3>¿Por qué necesitamos bloqueos?</h3>
+        <p>Cuando dos usuarios modifican el mismo registro al mismo tiempo, los cambios de uno pueden sobrescribir los del otro. Los <strong>bloqueos (locks)</strong> controlan el acceso concurrente garantizando que solo un usuario a la vez modifique un dato.</p>
+      </div>
+
+      <div class="concept-grid" style="grid-template-columns:1fr 1fr">
+        <div class="concept-box" style="border-top:4px solid #0E7EC4">
+          <div class="cb-label">Tipo de bloqueo</div>
+          <div class="cb-title">🔍 Bloqueo Compartido (S)</div>
+          <div class="cb-body"><strong>Shared Lock</strong> — permite que múltiples transacciones lean el dato simultáneamente. Ninguna puede modificarlo mientras otro lo lee. Se pide al hacer <code class="inline">SELECT ... FOR SHARE</code>.</div>
+        </div>
+        <div class="concept-box" style="border-top:4px solid #D97706">
+          <div class="cb-label">Tipo de bloqueo</div>
+          <div class="cb-title">✏️ Bloqueo Exclusivo (X)</div>
+          <div class="cb-body"><strong>Exclusive Lock</strong> — solo una transacción puede tener acceso. Ninguna otra puede leer ni escribir. Se pide al hacer <code class="inline">SELECT ... FOR UPDATE</code> o al ejecutar un <code class="inline">UPDATE/DELETE</code>.</div>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:12px;font-size:17px">Las dos fases del protocolo 2PL</h3>
+      <div class="flow">
+        <div class="flow-step">🔒 Fase de<br>Crecimiento<br><small style="font-weight:400;font-size:11px">Solo adquiere bloqueos</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step ok">📍 Punto de<br>bloqueo<br><small style="font-weight:400;font-size:11px">Máximo de bloqueos</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step red">🔓 Fase de<br>Reducción<br><small style="font-weight:400;font-size:11px">Solo libera bloqueos</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step ok">✅ COMMIT/<br>ROLLBACK</div>
+      </div>
+      <div class="callout info"><div class="c-title">La regla fundamental del 2PL</div>
+        <p>Una transacción <strong>nunca puede adquirir un nuevo bloqueo después de haber liberado uno</strong>. Esta regla garantiza la seriabilidad — el resultado de transacciones concurrentes es equivalente a ejecutarlas una por una en algún orden.</p>
+      </div>
+
+      <div class="code-label">MySQL · bloqueo_selectivo.sql</div>
+      <pre class="sql"><span class="cm">-- Bloqueo compartido: múltiples pueden leer</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="t">productos</span>
+<span class="kw">WHERE</span> id = <span class="num">10</span>
+<span class="kw">FOR SHARE</span>;  <span class="cm">-- nadie puede modificar este registro hasta que hagamos COMMIT</span>
+
+<span class="cm">-- Bloqueo exclusivo: solo yo puedo leer y escribir</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="t">productos</span>
+<span class="kw">WHERE</span> id = <span class="num">10</span>
+<span class="kw">FOR UPDATE</span>;  <span class="cm">-- nadie más puede ni siquiera leerlo</span>
+
+<span class="cm">-- Bloqueo a nivel de tabla completa</span>
+<span class="kw">LOCK TABLES</span> <span class="t">ventas</span> <span class="kw">WRITE</span>;
+  <span class="cm">-- ... operaciones ...</span>
+<span class="kw">UNLOCK TABLES</span>;</pre>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('acid')">← ACID</button>
+        <button class="btn" onclick="go('concurrencia')">4 · Concurrencia →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 4: CONCURRENCIA ══ -->
+    <section class="page" id="sec-concurrencia">
+      <div class="eyebrow">Sección 4 · Teoría</div>
+      <h2 class="page-title">Concurrencia, problemas y Deadlock</h2>
+
+      <h3 style="margin-bottom:12px;font-size:17px">Problemas de la concurrencia sin control</h3>
+      <table class="data">
+        <tr><th>Problema</th><th>¿Qué ocurre?</th><th>Solución</th></tr>
+        <tr><td><strong>Lectura sucia</strong><br><em>Dirty Read</em></td><td>T2 lee datos que T1 modificó pero aún no confirmó. Si T1 hace ROLLBACK, T2 leyó algo que nunca existió.</td><td>Nivel de aislamiento <code class="inline">READ COMMITTED</code></td></tr>
+        <tr><td><strong>Lectura no repetible</strong><br><em>Non-repeatable Read</em></td><td>T1 lee un valor, T2 lo modifica y confirma, T1 vuelve a leerlo y obtiene un valor diferente.</td><td>Nivel <code class="inline">REPEATABLE READ</code> (default en MySQL)</td></tr>
+        <tr><td><strong>Lectura fantasma</strong><br><em>Phantom Read</em></td><td>T1 consulta con WHERE y obtiene N filas. T2 inserta una fila que cumple el WHERE. T1 vuelve a consultar y ahora obtiene N+1.</td><td>Nivel <code class="inline">SERIALIZABLE</code></td></tr>
+        <tr><td><strong>Actualización perdida</strong><br><em>Lost Update</em></td><td>T1 y T2 leen el mismo valor, ambos calculan y escriben — el resultado de T1 queda sobreescrito por T2.</td><td>Bloqueos exclusivos con <code class="inline">FOR UPDATE</code></td></tr>
+      </table>
+
+      <h3 style="margin-bottom:12px;font-size:17px">Deadlock (Abrazo mortal)</h3>
+      <div class="card">
+        <p>Ocurre cuando dos transacciones se bloquean mutuamente esperando recursos que la otra tiene:</p>
+        <div class="flow" style="margin:12px 0">
+          <div class="flow-step red">T1 tiene<br>Lock(A)<br>espera Lock(B)</div>
+          <div class="flow-arrow">⟷</div>
+          <div class="flow-step red">T2 tiene<br>Lock(B)<br>espera Lock(A)</div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step" style="background:#FEF3C7;border-color:#F59E0B;color:#92400E">💀 Deadlock<br>ninguna avanza</div>
+        </div>
+        <p><strong>MySQL lo detecta automáticamente</strong> y mata a la transacción víctima (generalmente la más reciente). Esa transacción recibe un error y debe ser reiniciada por la aplicación.</p>
+      </div>
+
+      <div class="code-label">MySQL · niveles_aislamiento.sql</div>
+      <pre class="sql"><span class="cm">-- Ver el nivel de aislamiento actual</span>
+<span class="kw">SELECT</span> @@transaction_isolation;
+<span class="cm">-- Resultado default MySQL: REPEATABLE-READ</span>
+
+<span class="cm">-- Cambiar para la sesión actual</span>
+<span class="kw">SET SESSION TRANSACTION ISOLATION LEVEL</span> <span class="kw">READ COMMITTED</span>;
+<span class="kw">SET SESSION TRANSACTION ISOLATION LEVEL</span> <span class="kw">SERIALIZABLE</span>;
+
+<span class="cm">-- Ver estado de bloqueos en tiempo real</span>
+<span class="kw">SHOW ENGINE INNODB STATUS</span>;</pre>
+
+      <div class="callout ok"><div class="c-title">Técnica para prevenir deadlocks</div>
+        <p>Siempre adquiere los bloqueos <strong>en el mismo orden</strong> en todas las transacciones. Si T1 siempre bloquea A antes que B, y T2 también, nunca habrá deadlock.</p>
+      </div>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('bloqueo')">← 2PL</button>
+        <button class="btn" onclick="go('ejemplo1')">5 · Ejemplo guiado →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 5: EJEMPLO GUIADO TRANSACCIONES ══ -->
+    <section class="page" id="sec-ejemplo1">
+      <div class="eyebrow">Sección 5 · Ejemplo guiado</div>
+      <h2 class="page-title">Caso práctico · Sistema de inventario</h2>
+
+      <div class="callout info"><div class="c-title">Lee el código antes de ejecutarlo</div>
+        <p>Este ejemplo simula una venta en el sistema de la empresa. Analiza cada paso, luego cópialo al simulador de la Sección 11 para verlo funcionar.</p>
+      </div>
+
+      <div class="card">
+        <h4>Escenario: Procesar una venta</h4>
+        <p>Cuando se vende un producto: (1) se registra la orden, (2) se descuenta el stock, (3) se actualiza el total. Si algo falla en cualquier paso, todo debe revertirse — no queremos órdenes sin stock descontado.</p>
+      </div>
+
+      <div class="code-label">MySQL · venta_transaccion.sql — Ejemplo completo con manejo de errores</div>
+      <pre class="sql"><span class="cm">-- Iniciamos la transacción</span>
+<span class="kw">START TRANSACTION</span>;
+
+<span class="cm">-- Paso 1: Bloquear el producto para modificarlo</span>
+<span class="kw">SELECT</span> id, nombre, stock, precio
+<span class="kw">FROM</span> <span class="t">products</span>
+<span class="kw">WHERE</span> id = <span class="num">1</span>
+<span class="kw">FOR UPDATE</span>;  <span class="cm">-- nadie más puede modificar este producto</span>
+
+<span class="cm">-- Paso 2: Verificar stock suficiente (esto lo hace la app)</span>
+<span class="cm">-- Si stock < cantidad_pedida → ROLLBACK</span>
+
+<span class="cm">-- Paso 3: Descontar stock</span>
+<span class="kw">UPDATE</span> <span class="t">products</span>
+<span class="kw">SET</span> stock = stock - <span class="num">2</span>
+<span class="kw">WHERE</span> id = <span class="num">1</span> <span class="kw">AND</span> stock >= <span class="num">2</span>;
+
+<span class="cm">-- Paso 4: Registrar la orden</span>
+<span class="kw">INSERT INTO</span> <span class="t">orders</span> (employee_id, order_date, total)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="fn">NOW</span>(), <span class="num">2</span> * (<span class="kw">SELECT</span> precio <span class="kw">FROM</span> <span class="t">products</span> <span class="kw">WHERE</span> id = <span class="num">1</span>));
+
+<span class="cm">-- Paso 5: Todo salió bien → confirmar</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cm">-- Si algo falló → deshacer todo</span>
+<span class="cm">-- ROLLBACK;</span></pre>
+
+      <div class="callout warn"><div class="c-title">¿Por qué el AND stock >= 2 en el UPDATE?</div>
+        <p>Es una <strong>verificación atómica</strong>: si el UPDATE afecta 0 filas, sabemos que el stock era insuficiente. Esto es más seguro que un SELECT separado porque entre el SELECT y el UPDATE otro usuario podría haber comprado el último producto.</p>
+      </div>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('concurrencia')">← Concurrencia</button>
+        <button class="btn" onclick="go('acceso')">6 · Control de acceso →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 6: CONTROL DE ACCESO ══ -->
+    <section class="page" id="sec-acceso">
+      <div class="eyebrow">Sección 6 · Teoría</div>
+      <h2 class="page-title">Control de acceso · Usuarios, roles y privilegios</h2>
+
+      <div class="card">
+        <h3>¿Por qué controlar el acceso?</h3>
+        <p>En una empresa real, no todos deben poder hacer todo en la base de datos. Un empleado de ventas puede consultar productos pero no puede modificar sueldos. Un DBA puede hacer todo pero no acceder a datos personales sin autorización. El <strong>principio de mínimo privilegio</strong> dice: otorgar solo lo necesario para el trabajo.</p>
+      </div>
+
+      <h3 style="margin-bottom:12px;font-size:17px">Jerarquía: Usuario → Rol → Privilegios</h3>
+      <div class="concept-grid" style="grid-template-columns:repeat(3,1fr)">
+        <div class="concept-box" style="border-top:4px solid #0E7EC4">
+          <div class="cb-label">Nivel 1</div>
+          <div class="cb-title">👤 Usuario</div>
+          <div class="cb-body">Identidad con contraseña. Se crea con <code class="inline">CREATE USER</code>. Por sí solo no puede hacer nada hasta que se le otorguen privilegios.</div>
+        </div>
+        <div class="concept-box" style="border-top:4px solid #9333EA">
+          <div class="cb-label">Nivel 2</div>
+          <div class="cb-title">🏷️ Rol</div>
+          <div class="cb-body">Conjunto de privilegios agrupados bajo un nombre. Facilita la gestión: en lugar de dar 10 permisos individualmente, asignas un rol.</div>
+        </div>
+        <div class="concept-box" style="border-top:4px solid #059669">
+          <div class="cb-label">Nivel 3</div>
+          <div class="cb-title">🔑 Privilegios</div>
+          <div class="cb-body"><code class="inline">SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, GRANT OPTION, ALL PRIVILEGES</code>. Pueden ser globales, por BD o por tabla.</div>
+        </div>
+      </div>
+
+      <div class="code-label">MySQL · usuarios_y_roles.sql</div>
+      <pre class="sql"><span class="cm">-- ① Crear usuarios</span>
+<span class="kw">CREATE USER</span> <span class="str">'vendedor1'</span>@<span class="str">'localhost'</span> <span class="kw">IDENTIFIED BY</span> <span class="str">'Pass123!'</span>;
+<span class="kw">CREATE USER</span> <span class="str">'analista1'</span>@<span class="str">'%'</span> <span class="kw">IDENTIFIED BY</span> <span class="str">'Anal2024!'</span>;
+
+<span class="cm">-- ② Crear roles</span>
+<span class="kw">CREATE ROLE</span> <span class="str">'rol_ventas'</span>, <span class="str">'rol_reportes'</span>, <span class="str">'rol_admin'</span>;
+
+<span class="cm">-- ③ Asignar privilegios al rol</span>
+<span class="kw">GRANT SELECT</span>, <span class="kw">INSERT</span> <span class="kw">ON</span> empresa_cobd.orders <span class="kw">TO</span> <span class="str">'rol_ventas'</span>;
+<span class="kw">GRANT SELECT</span> <span class="kw">ON</span> empresa_cobd.* <span class="kw">TO</span> <span class="str">'rol_reportes'</span>;
+<span class="kw">GRANT ALL PRIVILEGES ON</span> empresa_cobd.* <span class="kw">TO</span> <span class="str">'rol_admin'</span>;
+
+<span class="cm">-- ④ Asignar rol a usuario</span>
+<span class="kw">GRANT</span> <span class="str">'rol_ventas'</span> <span class="kw">TO</span> <span class="str">'vendedor1'</span>@<span class="str">'localhost'</span>;
+<span class="kw">GRANT</span> <span class="str">'rol_reportes'</span> <span class="kw">TO</span> <span class="str">'analista1'</span>@<span class="str">'%'</span>;
+
+<span class="cm">-- ⑤ Verificar privilegios</span>
+<span class="kw">SHOW GRANTS FOR</span> <span class="str">'vendedor1'</span>@<span class="str">'localhost'</span>;
+
+<span class="cm">-- ⑥ Revocar privilegios</span>
+<span class="kw">REVOKE INSERT ON</span> empresa_cobd.orders <span class="kw">FROM</span> <span class="str">'rol_ventas'</span>;
+
+<span class="cm">-- ⑦ Eliminar usuario</span>
+<span class="kw">DROP USER</span> <span class="str">'vendedor1'</span>@<span class="str">'localhost'</span>;</pre>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('ejemplo1')">← Ejemplo transacciones</button>
+        <button class="btn" onclick="go('cifrado')">7 · Cifrado y respaldos →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 7: CIFRADO Y RESPALDOS ══ -->
+    <section class="page" id="sec-cifrado">
+      <div class="eyebrow">Sección 7 · Teoría</div>
+      <h2 class="page-title">Cifrado de datos y estrategias de respaldo</h2>
+
+      <div class="concept-grid" style="grid-template-columns:1fr 1fr">
+        <div class="concept-box" style="border-top:4px solid #D97706">
+          <div class="cb-label">Cifrado en MySQL</div>
+          <div class="cb-title">🔐 AES_ENCRYPT</div>
+          <div class="cb-body">MySQL provee funciones nativas para cifrar columnas sensibles como contraseñas, números de tarjeta o CURP. Solo quien tiene la clave puede leer el dato.</div>
+        </div>
+        <div class="concept-box" style="border-top:4px solid #DC2626">
+          <div class="cb-label">Hashing seguro</div>
+          <div class="cb-title">🔏 SHA2 / bcrypt</div>
+          <div class="cb-body">Para contraseñas, nunca se guarda el valor original — solo su hash. <code class="inline">SHA2()</code> es unidireccional: de él no puedes recuperar la contraseña original.</div>
+        </div>
+      </div>
+
+      <div class="code-label">MySQL · cifrado_datos.sql</div>
+      <pre class="sql"><span class="cm">-- Cifrar con AES (clave simétrica)</span>
+<span class="kw">INSERT INTO</span> <span class="t">employees</span> (name, salary, curp_cifrada)
+<span class="kw">VALUES</span> (
+  <span class="str">'Ana García'</span>,
+  <span class="num">15000</span>,
+  <span class="fn">AES_ENCRYPT</span>(<span class="str">'GAAA990101HTCRNB01'</span>, <span class="str">'mi_clave_secreta'</span>)
+);
+
+<span class="cm">-- Descifrar para leer</span>
+<span class="kw">SELECT</span> name,
+  <span class="fn">AES_DECRYPT</span>(curp_cifrada, <span class="str">'mi_clave_secreta'</span>) <span class="kw">AS</span> curp_legible
+<span class="kw">FROM</span> <span class="t">employees</span>;
+
+<span class="cm">-- Hashear contraseñas (unidireccional)</span>
+<span class="kw">INSERT INTO</span> <span class="t">users</span> (username, password_hash)
+<span class="kw">VALUES</span> (<span class="str">'ana'</span>, <span class="fn">SHA2</span>(<span class="str">'MiPassword123'</span>, <span class="num">256</span>));
+
+<span class="cm">-- Verificar contraseña (comparar hash)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> <span class="t">users</span>
+<span class="kw">WHERE</span> username = <span class="str">'ana'</span>
+  <span class="kw">AND</span> password_hash = <span class="fn">SHA2</span>(<span class="str">'MiPassword123'</span>, <span class="num">256</span>);</pre>
+
+      <h3 style="margin-bottom:12px;margin-top:20px;font-size:17px">Estrategias de respaldo</h3>
+      <table class="data">
+        <tr><th>Tipo</th><th>¿Qué respalda?</th><th>Tiempo</th><th>Espacio</th><th>Cuándo usar</th></tr>
+        <tr><td><strong>Completo</strong><br><em>Full backup</em></td><td>Toda la base de datos</td><td>Largo</td><td>Mucho</td><td>Semanal o mensual</td></tr>
+        <tr><td><strong>Incremental</strong></td><td>Solo cambios desde el último backup (full o incremental)</td><td>Corto</td><td>Poco</td><td>Diario</td></tr>
+        <tr><td><strong>Diferencial</strong></td><td>Cambios desde el último full backup</td><td>Medio</td><td>Medio</td><td>Cada 2-3 días</td></tr>
+      </table>
+
+      <div class="callout ok"><div class="c-title">Estrategia recomendada en producción</div>
+        <p>Full backup los domingos + Incrementales de lunes a sábado. Así en el peor caso solo pierdes los datos del día de hoy. Los respaldos deben almacenarse en un servidor diferente o en la nube.</p>
+      </div>
+
+      <div class="code-label">Shell · mysqldump — respaldo desde línea de comandos</div>
+      <pre class="sql"><span class="cm">-- Respaldo completo de una base de datos</span>
+<span class="cm">-- (ejecutar en terminal, no en MySQL)</span>
+<span class="cm">mysqldump -u root -p empresa_cobd > empresa_20260623.sql</span>
+
+<span class="cm">-- Respaldo de tabla específica</span>
+<span class="cm">mysqldump -u root -p empresa_cobd employees > employees_bak.sql</span>
+
+<span class="cm">-- Restaurar desde respaldo</span>
+<span class="cm">mysql -u root -p empresa_cobd &lt; empresa_20260623.sql</span></pre>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('acceso')">← Control de acceso</button>
+        <button class="btn" onclick="go('ejemplo2')">8 · Ejemplo guiado seguridad →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 8: EJEMPLO GUIADO SEGURIDAD ══ -->
+    <section class="page" id="sec-ejemplo2">
+      <div class="eyebrow">Sección 8 · Ejemplo guiado</div>
+      <h2 class="page-title">Caso práctico · Configurar seguridad completa</h2>
+
+      <div class="callout info"><div class="c-title">Escenario real</div>
+        <p>La empresa tiene tres tipos de empleados que usan la base de datos: el <strong>DBA</strong> (todo), el <strong>gerente de ventas</strong> (consulta + inserta órdenes) y el <strong>analista financiero</strong> (solo consulta salarios y ventas). Configura los accesos correctos.</p>
+      </div>
+
+      <div class="code-label">MySQL · seguridad_completa.sql — solución paso a paso</div>
+      <pre class="sql"><span class="cm">-- ══ PASO 1: Crear roles según función ══</span>
+<span class="kw">CREATE ROLE</span> <span class="str">'dba_empresa'</span>;
+<span class="kw">CREATE ROLE</span> <span class="str">'gerente_ventas'</span>;
+<span class="kw">CREATE ROLE</span> <span class="str">'analista_financiero'</span>;
+
+<span class="cm">-- ══ PASO 2: Definir qué puede hacer cada rol ══</span>
+<span class="kw">GRANT ALL PRIVILEGES ON</span> empresa_cobd.* <span class="kw">TO</span> <span class="str">'dba_empresa'</span>;
+
+<span class="kw">GRANT SELECT ON</span> empresa_cobd.products <span class="kw">TO</span> <span class="str">'gerente_ventas'</span>;
+<span class="kw">GRANT SELECT</span>, <span class="kw">INSERT ON</span> empresa_cobd.orders <span class="kw">TO</span> <span class="str">'gerente_ventas'</span>;
+
+<span class="kw">GRANT SELECT</span>(name, salary, department_id)
+  <span class="kw">ON</span> empresa_cobd.employees <span class="kw">TO</span> <span class="str">'analista_financiero'</span>;
+<span class="kw">GRANT SELECT ON</span> empresa_cobd.orders <span class="kw">TO</span> <span class="str">'analista_financiero'</span>;
+
+<span class="cm">-- ══ PASO 3: Crear usuarios reales ══</span>
+<span class="kw">CREATE USER</span> <span class="str">'carlos_dba'</span>@<span class="str">'localhost'</span> <span class="kw">IDENTIFIED BY</span> <span class="str">'Dba$2024!'</span>;
+<span class="kw">CREATE USER</span> <span class="str">'laura_ventas'</span>@<span class="str">'%'</span> <span class="kw">IDENTIFIED BY</span> <span class="str">'Vtas!456'</span>;
+<span class="kw">CREATE USER</span> <span class="str">'pedro_analista'</span>@<span class="str">'%'</span> <span class="kw">IDENTIFIED BY</span> <span class="str">'Ana#789'</span>;
+
+<span class="cm">-- ══ PASO 4: Asignar roles ══</span>
+<span class="kw">GRANT</span> <span class="str">'dba_empresa'</span> <span class="kw">TO</span> <span class="str">'carlos_dba'</span>@<span class="str">'localhost'</span>;
+<span class="kw">GRANT</span> <span class="str">'gerente_ventas'</span> <span class="kw">TO</span> <span class="str">'laura_ventas'</span>@<span class="str">'%'</span>;
+<span class="kw">GRANT</span> <span class="str">'analista_financiero'</span> <span class="kw">TO</span> <span class="str">'pedro_analista'</span>@<span class="str">'%'</span>;
+
+<span class="cm">-- ══ PASO 5: Aplicar cambios ══</span>
+<span class="kw">FLUSH PRIVILEGES</span>;</pre>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('cifrado')">← Cifrado</button>
+        <button class="btn" onclick="go('act1')">✏️ Ir a Actividad 1 →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 9: ACTIVIDAD 1 — RA 3.1 ══ -->
+    <section class="page" id="sec-act1">
+      <div class="eyebrow">Sección 9 · Actividad evaluada</div>
+      <h2 class="page-title">Actividad 1 · Transacciones y control de concurrencia</h2>
+
+      <div class="kcheck">
+        <div class="kc-head">🎯 Verifica antes de empezar</div>
+        <p>Necesitas dominar: <strong>(1)</strong> las 4 propiedades ACID y cuándo se viola cada una, <strong>(2)</strong> la sintaxis <code class="inline">START TRANSACTION / COMMIT / ROLLBACK / SAVEPOINT</code>, <strong>(3)</strong> qué es el protocolo 2PL y los tipos de bloqueo, <strong>(4)</strong> los 4 problemas de concurrencia y sus niveles de aislamiento. Si algo no está claro, regresa a las <strong>Secciones 2, 3 y 4</strong>.</p>
+      </div>
+
+      <div id="act1Locked" class="locked-banner" style="display:none">
+        <div class="locked-icon">🔒</div>
+        <div>
+          <h4>Actividad bloqueada — ya enviaste tu reporte</h4>
+          <p>Tu evaluación está registrada. Si necesitas hacer una corrección, solicita a tu docente que libere el acceso.</p>
+          <div class="unlock-row">
+            <input type="text" id="unlockAct1" placeholder="Clave del docente...">
+            <button class="btn" style="padding:8px 14px;font-size:13px" onclick="desbloquear('act1')">Liberar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="act1Body">
+        <div class="act-meta">
+          <span class="badge mod">COBD-20 · RA 3.1</span>
+          <span class="badge ra">Evidencia 3.1.1</span>
+          <span class="badge pts">90 pts → 10% del módulo</span>
+        </div>
+
+        <div class="enunciado">
+          <div class="et">📋 Contexto del problema</div>
+          <p class="prob">La empresa <strong>Distribuidora del Norte S.A.</strong> tiene un sistema de inventario en MySQL. Tu tarea es demostrar que conoces las transacciones, los problemas de concurrencia y cómo prevenirlos. Trabaja con la base <code class="inline">empresa_cobd</code> del simulador.</p>
+        </div>
+
+        <!-- PARTE A: Conceptual ACID -->
+        <div class="card">
+          <h4>Parte A · Propiedades ACID (30 pts)</h4>
+
+          <div class="q-block">
+            <div class="q-label">A1. Una venta descuenta el stock pero el sistema falla antes de registrar el pago. ¿Qué propiedad ACID evita que el stock quede descontado sin pago? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="qa1">
+              <label class="radio-opt"><input type="radio" name="qa1" value="a">Consistencia — mantiene las reglas de negocio</label>
+              <label class="radio-opt"><input type="radio" name="qa1" value="b">Atomicidad — todo ocurre o nada ocurre</label>
+              <label class="radio-opt"><input type="radio" name="qa1" value="c">Durabilidad — los cambios son permanentes</label>
+              <label class="radio-opt"><input type="radio" name="qa1" value="d">Aislamiento — las transacciones no se interfieren</label>
+            </div>
+            <div class="fb" id="fb-qa1"></div>
+            <button class="btn-check" onclick="checkRadio('qa1','b','fb-qa1','Correcto — la Atomicidad garantiza que si el pago falla, el descuento de stock también se deshace con ROLLBACK.','Incorrecto. Piensa: ¿qué propiedad dice que la transacción es indivisible — o todo o nada?')">Verificar</button>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label">A2. Dos usuarios leen el saldo de una cuenta ($5,000), cada uno suma $1,000 y escribe. El resultado final es $6,000 en lugar de $7,000. ¿Qué problema de concurrencia es? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="qa2">
+              <label class="radio-opt"><input type="radio" name="qa2" value="a">Lectura sucia (Dirty Read)</label>
+              <label class="radio-opt"><input type="radio" name="qa2" value="b">Lectura fantasma (Phantom Read)</label>
+              <label class="radio-opt"><input type="radio" name="qa2" value="c">Actualización perdida (Lost Update)</label>
+              <label class="radio-opt"><input type="radio" name="qa2" value="d">Lectura no repetible (Non-repeatable Read)</label>
+            </div>
+            <div class="fb" id="fb-qa2"></div>
+            <button class="btn-check" onclick="checkRadio('qa2','c','fb-qa2','¡Correcto! La actualización de T1 quedó sobreescrita por T2. La solución es usar SELECT ... FOR UPDATE antes de leer el saldo.','Incorrecto. Ambos leyeron el mismo valor y el update del primero fue sobreescrito por el segundo. ¿Qué nombre tiene eso?')">Verificar</button>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label">A3. En el protocolo 2PL, ¿cuál de estas acciones NO está permitida? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="qa3">
+              <label class="radio-opt"><input type="radio" name="qa3" value="a">Adquirir un bloqueo exclusivo durante la fase de crecimiento</label>
+              <label class="radio-opt"><input type="radio" name="qa3" value="b">Adquirir un bloqueo compartido durante la fase de reducción</label>
+              <label class="radio-opt"><input type="radio" name="qa3" value="c">Liberar bloqueos durante la fase de reducción</label>
+              <label class="radio-opt"><input type="radio" name="qa3" value="d">Tener múltiples bloqueos al mismo tiempo</label>
+            </div>
+            <div class="fb" id="fb-qa3"></div>
+            <button class="btn-check" onclick="checkRadio('qa3','b','fb-qa3','Correcto — en la fase de reducción SOLO se liberan bloqueos, no se adquieren nuevos. Hacerlo violaría el protocolo 2PL.','Revisa la Sección 3. La regla del 2PL es que en la fase de reducción no se puede pedir ningún bloqueo nuevo.')">Verificar</button>
+          </div>
+        </div>
+
+        <!-- PARTE B: SQL práctico transacción -->
+        <div class="card">
+          <h4>Parte B · Escribe una transacción con SAVEPOINT (35 pts)</h4>
+          <div class="enunciado">
+            <div class="et">📋 Problema a resolver</div>
+            <p class="prob">Escribe una transacción MySQL que registre un pedido de 3 unidades del producto con id=2 para el empleado id=1. La transacción debe: <strong>(1)</strong> iniciar con <code class="inline">START TRANSACTION</code>, <strong>(2)</strong> insertar una orden en la tabla <code class="inline">orders</code>, <strong>(3)</strong> usar un <code class="inline">SAVEPOINT</code> llamado <code class="inline">sp_orden</code>, <strong>(4)</strong> descontar el stock en <code class="inline">products</code>, <strong>(5)</strong> terminar con <code class="inline">COMMIT</code>. Incluye un comentario explicando qué haría el ROLLBACK TO SAVEPOINT si fallara el update del stock.</p>
+          </div>
+          <div class="q-block">
+            <div class="q-label">Tu solución SQL: <span class="q-pts">35 pts</span></div>
+            <textarea id="actB" data-key="actB" rows="14" placeholder="START TRANSACTION;&#10;  -- Tu código aquí&#10;  ...&#10;COMMIT;" oninput="autoSave('actB',this.value)"></textarea>
+            <div class="save-note" id="note-actB">✓ Guardado</div>
+          </div>
+        </div>
+
+        <!-- PARTE C: Análisis Deadlock -->
+        <div class="card">
+          <h4>Parte C · Análisis de Deadlock (25 pts)</h4>
+          <div class="enunciado">
+            <div class="et">📋 Escenario</div>
+            <p class="prob">T1 bloquea <code class="inline">products</code> (FOR UPDATE) y espera bloquear <code class="inline">orders</code>. T2 bloquea <code class="inline">orders</code> (FOR UPDATE) y espera bloquear <code class="inline">products</code>. Hay un deadlock.</p>
+          </div>
+          <div class="q-block">
+            <div class="q-label">C1. ¿Qué hace MySQL automáticamente cuando detecta el deadlock? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="qc1">
+              <label class="radio-opt"><input type="radio" name="qc1" value="a">Espera indefinidamente hasta que una transacción haga COMMIT</label>
+              <label class="radio-opt"><input type="radio" name="qc1" value="b">Hace ROLLBACK automático a la transacción "víctima" (generalmente la más reciente)</label>
+              <label class="radio-opt"><input type="radio" name="qc1" value="c">Hace COMMIT forzado a ambas transacciones</label>
+              <label class="radio-opt"><input type="radio" name="qc1" value="d">Reinicia el servidor MySQL</label>
+            </div>
+            <div class="fb" id="fb-qc1"></div>
+            <button class="btn-check" onclick="checkRadio('qc1','b','fb-qc1','Correcto — MySQL tiene un detector de deadlocks. Selecciona la transacción víctima (menor costo de rollback), la deshace y la aplicación debe reintentar.','Revisa la Sección 4. MySQL tiene un mecanismo automático de resolución.')">Verificar</button>
+          </div>
+          <div class="q-block">
+            <div class="q-label">C2. Explica en 3-4 oraciones cómo reescribirías las dos transacciones para prevenir el deadlock desde el diseño. <span class="q-pts">15 pts</span></div>
+            <textarea id="actC2" data-key="actC2" rows="5" placeholder="Para prevenir el deadlock, ambas transacciones deben..." oninput="autoSave('actC2',this.value)"></textarea>
+            <div class="save-note" id="note-actC2">✓ Guardado</div>
+          </div>
+        </div>
+
+        <div class="pager">
+          <button class="btn ghost" onclick="go('ejemplo1')">← Ejemplo guiado</button>
+          <button class="btn" onclick="go('act2')">Actividad 2 →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SEC 10: ACTIVIDAD 2 — RA 3.2 ══ -->
+    <section class="page" id="sec-act2">
+      <div class="eyebrow">Sección 10 · Actividad evaluada</div>
+      <h2 class="page-title">Actividad 2 · Control de acceso y seguridad</h2>
+
+      <div class="kcheck">
+        <div class="kc-head">🎯 Verifica antes de empezar</div>
+        <p>Necesitas dominar: <strong>(1)</strong> <code class="inline">CREATE USER</code>, <code class="inline">CREATE ROLE</code>, <code class="inline">GRANT</code>, <code class="inline">REVOKE</code>, <code class="inline">DROP USER</code>, <strong>(2)</strong> diferencia entre privilegios de tabla y de columna, <strong>(3)</strong> <code class="inline">AES_ENCRYPT / AES_DECRYPT</code> y <code class="inline">SHA2()</code>, <strong>(4)</strong> tipos de respaldo (completo vs incremental). Si algo no está claro, regresa a las <strong>Secciones 6 y 7</strong>.</p>
+      </div>
+
+      <div id="act2Locked" class="locked-banner" style="display:none">
+        <div class="locked-icon">🔒</div>
+        <div>
+          <h4>Actividad bloqueada — ya enviaste tu reporte</h4>
+          <p>Tu evaluación está registrada. Si necesitas hacer una corrección, solicita a tu docente que libere el acceso.</p>
+          <div class="unlock-row">
+            <input type="text" id="unlockAct2" placeholder="Clave del docente...">
+            <button class="btn" style="padding:8px 14px;font-size:13px" onclick="desbloquear('act2')">Liberar</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="act2Body">
+        <div class="act-meta">
+          <span class="badge mod">COBD-20 · RA 3.2</span>
+          <span class="badge ra">Evidencia 3.2.1</span>
+          <span class="badge pts">90 pts → 10% del módulo</span>
+        </div>
+
+        <!-- PARTE A: Privilegios conceptual -->
+        <div class="card">
+          <h4>Parte A · Usuarios, roles y privilegios (30 pts)</h4>
+
+          <div class="q-block">
+            <div class="q-label">A1. ¿Cuál es la ventaja principal de usar ROLES en lugar de asignar privilegios directamente a cada usuario? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="r2a1">
+              <label class="radio-opt"><input type="radio" name="r2a1" value="a">Los roles son más rápidos de ejecutar que los GRANT directos</label>
+              <label class="radio-opt"><input type="radio" name="r2a1" value="b">Permiten agrupar permisos: al cambiar el rol, todos los usuarios con ese rol se actualizan automáticamente</label>
+              <label class="radio-opt"><input type="radio" name="r2a1" value="c">Los roles permiten cifrar la contraseña del usuario</label>
+              <label class="radio-opt"><input type="radio" name="r2a1" value="d">Solo los roles pueden tener el privilegio ALL PRIVILEGES</label>
+            </div>
+            <div class="fb" id="fb-r2a1"></div>
+            <button class="btn-check" onclick="checkRadio('r2a1','b','fb-r2a1','¡Correcto! Es el principio de gestión centralizada: cambias el rol una vez y todos sus usuarios heredan el cambio automáticamente.','Piensa en qué pasa cuando contratas 50 vendedores nuevos. ¿Es mejor darle 10 privilegios a cada uno, o asignarles un rol ya configurado?')">Verificar</button>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label">A2. Un analista necesita ver solo la columna <code class="inline">salary</code> de la tabla <code class="inline">employees</code>. ¿Cuál comando es el correcto? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="r2a2">
+              <label class="radio-opt"><input type="radio" name="r2a2" value="a"><code>GRANT SELECT ON empresa.employees TO 'analista';</code></label>
+              <label class="radio-opt"><input type="radio" name="r2a2" value="b"><code>GRANT SELECT(salary) ON empresa.employees TO 'analista';</code></label>
+              <label class="radio-opt"><input type="radio" name="r2a2" value="c"><code>GRANT salary TO 'analista' ON empresa.employees;</code></label>
+              <label class="radio-opt"><input type="radio" name="r2a2" value="d"><code>GRANT SELECT ON empresa.employees.salary TO 'analista';</code></label>
+            </div>
+            <div class="fb" id="fb-r2a2"></div>
+            <button class="btn-check" onclick="checkRadio('r2a2','b','fb-r2a2','Correcto — MySQL soporta privilegios a nivel de columna con la sintaxis GRANT SELECT(columna) ON tabla TO usuario.','Recuerda que MySQL permite restringir el SELECT a columnas específicas con GRANT SELECT(col) ON tabla.')">Verificar</button>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label">A3. ¿Qué hace exactamente la instrucción <code class="inline">REVOKE INSERT ON empresa.orders FROM 'vendedor';</code>? <span class="q-pts">10 pts</span></div>
+            <textarea id="r2a3" data-key="r2a3" rows="3" placeholder="La instrucción REVOKE elimina/quita..." oninput="autoSave('r2a3',this.value)"></textarea>
+            <div class="save-note" id="note-r2a3">✓ Guardado</div>
+          </div>
+        </div>
+
+        <!-- PARTE B: SQL acceso práctico -->
+        <div class="card">
+          <h4>Parte B · Configuración SQL de usuarios y roles (35 pts)</h4>
+          <div class="enunciado">
+            <div class="et">📋 Problema a resolver</div>
+            <p class="prob">Escribe los comandos SQL completos para configurar lo siguiente: <strong>(1)</strong> Crear un rol <code class="inline">rol_almacen</code> que pueda hacer SELECT e INSERT en <code class="inline">products</code> y SELECT en <code class="inline">orders</code>. <strong>(2)</strong> Crear un usuario <code class="inline">almacenista1@localhost</code> con contraseña <code class="inline">Alm#2526</code>. <strong>(3)</strong> Asignar el rol al usuario. <strong>(4)</strong> Ejecutar <code class="inline">SHOW GRANTS</code> para verificar. <strong>(5)</strong> Revocar el privilegio INSERT del rol.</p>
+          </div>
+          <div class="q-block">
+            <div class="q-label">Tu solución SQL: <span class="q-pts">35 pts</span></div>
+            <textarea id="actB2" data-key="actB2" rows="14" placeholder="-- Paso 1: Crear rol&#10;CREATE ROLE ...&#10;&#10;-- Paso 2: Privilegios al rol&#10;GRANT ...&#10;&#10;-- Paso 3: Crear usuario&#10;CREATE USER ...&#10;&#10;-- Paso 4: Asignar rol&#10;GRANT rol TO usuario;&#10;&#10;-- Paso 5: Verificar&#10;SHOW GRANTS FOR ...&#10;&#10;-- Paso 6: Revocar&#10;REVOKE ..." oninput="autoSave('actB2',this.value)"></textarea>
+            <div class="save-note" id="note-actB2">✓ Guardado</div>
+          </div>
+        </div>
+
+        <!-- PARTE C: Cifrado y respaldo -->
+        <div class="card">
+          <h4>Parte C · Cifrado y estrategia de respaldo (25 pts)</h4>
+
+          <div class="q-block">
+            <div class="q-label">C1. La empresa quiere guardar el CURP de los empleados cifrado. Escribe el INSERT con <code class="inline">AES_ENCRYPT</code> y luego el SELECT con <code class="inline">AES_DECRYPT</code> para recuperarlo. Usa la clave <code class="inline">'clave_cobd_2526'</code>. <span class="q-pts">15 pts</span></div>
+            <textarea id="actC1b2" data-key="actC1b2" rows="8" placeholder="-- INSERT cifrado:&#10;INSERT INTO employees ...&#10;&#10;-- SELECT descifrado:&#10;SELECT ..." oninput="autoSave('actC1b2',this.value)"></textarea>
+            <div class="save-note" id="note-actC1b2">✓ Guardado</div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label">C2. Diseña una estrategia de respaldo para la base de datos de la empresa que se ejecute automáticamente cada semana. ¿Qué tipo de respaldo usarías cada día? ¿Por qué? <span class="q-pts">10 pts</span></div>
+            <div class="radio-group" id="r2c2">
+              <label class="radio-opt"><input type="radio" name="r2c2" value="a">Full backup todos los días — es el más seguro aunque use más espacio</label>
+              <label class="radio-opt"><input type="radio" name="r2c2" value="b">Full backup los domingos + Incrementales de lunes a sábado — balance entre seguridad y eficiencia</label>
+              <label class="radio-opt"><input type="radio" name="r2c2" value="c">Solo incrementales — nunca se necesita el backup completo</label>
+              <label class="radio-opt"><input type="radio" name="r2c2" value="d">Backup completo los lunes y no hacer nada el resto de la semana</label>
+            </div>
+            <div class="fb" id="fb-r2c2"></div>
+            <button class="btn-check" onclick="checkRadio('r2c2','b','fb-r2c2','Correcto — esta es la estrategia estándar en producción. El incremental es rápido y ocupa poco; el full semanal es el punto de restauración base.','Recuerda la Sección 7. Los incrementales solos no sirven sin un full backup de base. Los full diarios consumen demasiado espacio.')">Verificar</button>
+          </div>
+        </div>
+
+        <div class="pager">
+          <button class="btn ghost" onclick="go('act1')">← Actividad 1</button>
+          <button class="btn" onclick="go('simulador')">💻 Simulador MySQL →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ SEC 11: SIMULADOR MySQL ══ -->
+    <section class="page" id="sec-simulador">
+      <div class="eyebrow">Sección 11 · Laboratorio libre</div>
+      <h2 class="page-title">Simulador MySQL · empresa_cobd</h2>
+
+      <div class="callout info"><div class="c-title">Base de datos preinstalada: empresa_cobd</div>
+        <p>El simulador tiene cargadas las tablas <strong>employees, departments, products, orders, order_items</strong>. Puedes ejecutar cualquier SQL: SELECT, INSERT, UPDATE, DELETE, transacciones con BEGIN/COMMIT/ROLLBACK. Usa el botón <strong>Ver esquema</strong> para ver la estructura completa.</p>
+      </div>
+
+      <!-- TABS de ejemplos rápidos -->
+      <div class="sim-wrap">
+        <div class="sim-toolbar">
+          <div class="sim-title">MySQL Simulator · empresa_cobd</div>
+          <div class="sim-tabs">
+            <div class="sim-tab active" onclick="loadSnippet('consulta')">Consulta</div>
+            <div class="sim-tab" onclick="loadSnippet('transaccion')">Transacción</div>
+            <div class="sim-tab" onclick="loadSnippet('bloqueo')">Bloqueo</div>
+            <div class="sim-tab" onclick="loadSnippet('cifrado')">Cifrado</div>
+          </div>
+        </div>
+        <div class="sim-editor">
+          <div class="sim-gutter" id="simGutter"><span>1</span></div>
+          <textarea class="sim-code" id="simCode" spellcheck="false" oninput="updateGutter()" onkeydown="handleTab(event)">-- Bienvenido al Simulador MySQL de COBD Unidad 3
+-- Escribe tu SQL aquí y presiona Ejecutar ▶
+
+SELECT e.name, e.salary, d.name AS departamento
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.id
+ORDER BY e.salary DESC;
+</textarea>
+        </div>
+        <div class="schema-panel" id="schemaPanel">
+          <div class="schema-table-name">employees</div>
+          <div class="schema-col">id <span class="col-type">INT PK</span></div>
+          <div class="schema-col">name <span class="col-type">VARCHAR(100)</span></div>
+          <div class="schema-col">salary <span class="col-type">DECIMAL(10,2)</span></div>
+          <div class="schema-col">department_id <span class="col-type">INT FK→departments</span></div>
+          <div class="schema-col">hire_date <span class="col-type">DATE</span></div>
+          <div class="schema-col">email <span class="col-type">VARCHAR(100)</span></div>
+          <div class="schema-table-name">departments</div>
+          <div class="schema-col">id <span class="col-type">INT PK</span></div>
+          <div class="schema-col">name <span class="col-type">VARCHAR(80)</span></div>
+          <div class="schema-col">budget <span class="col-type">DECIMAL(12,2)</span></div>
+          <div class="schema-table-name">products</div>
+          <div class="schema-col">id <span class="col-type">INT PK</span></div>
+          <div class="schema-col">name <span class="col-type">VARCHAR(100)</span></div>
+          <div class="schema-col">price <span class="col-type">DECIMAL(10,2)</span></div>
+          <div class="schema-col">stock <span class="col-type">INT</span></div>
+          <div class="schema-col">category <span class="col-type">VARCHAR(50)</span></div>
+          <div class="schema-table-name">orders</div>
+          <div class="schema-col">id <span class="col-type">INT PK</span></div>
+          <div class="schema-col">employee_id <span class="col-type">INT FK→employees</span></div>
+          <div class="schema-col">order_date <span class="col-type">DATETIME</span></div>
+          <div class="schema-col">total <span class="col-type">DECIMAL(10,2)</span></div>
+          <div class="schema-col">status <span class="col-type">ENUM('pending','completed','cancelled')</span></div>
+          <div class="schema-table-name">order_items</div>
+          <div class="schema-col">id <span class="col-type">INT PK</span></div>
+          <div class="schema-col">order_id <span class="col-type">INT FK→orders</span></div>
+          <div class="schema-col">product_id <span class="col-type">INT FK→products</span></div>
+          <div class="schema-col">quantity <span class="col-type">INT</span></div>
+          <div class="schema-col">unit_price <span class="col-type">DECIMAL(10,2)</span></div>
+        </div>
+        <div class="sim-actions">
+          <button class="btn-run" onclick="runSQL()">▶ Ejecutar</button>
+          <button class="btn-clear" onclick="clearSQL()">Limpiar</button>
+          <button class="sim-schema-btn" onclick="toggleSchema()">📋 Ver esquema</button>
+        </div>
+        <div class="sim-out" id="simOut"><span class="muted">El resultado aparecerá aquí...</span></div>
+      </div>
+
+      <div class="pager">
+        <button class="btn ghost" onclick="go('act2')">← Actividad 2</button>
+        <button class="btn" onclick="go('bitacora')">12 · Bitácora →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 12: BITÁCORA ══ -->
+    <section class="page" id="sec-bitacora">
+      <div class="eyebrow">Sección 12 · Bitácora del alumno</div>
+      <h2 class="page-title">Reflexión de aprendizaje</h2>
+      <div class="callout info"><div class="c-title">¿Para qué sirve la bitácora?</div>
+        <p>No es una calificación adicional — es tu espacio para consolidar lo que aprendiste. Escribe con tus propias palabras. El docente la usa para ver cómo piensas, no solo qué tan bien copias sintaxis.</p>
+      </div>
+      <div class="bit-q">
+        <label>1. Explica con un ejemplo de la vida real (distinto al del cuaderno) cuándo usarías una transacción con ROLLBACK. ¿Qué propiedad ACID estás aplicando principalmente?</label>
+        <textarea id="bit1" data-key="bit1" placeholder="En la vida real usaría una transacción cuando..." oninput="autoSave('bit1',this.value)"></textarea>
+        <div class="save-note" id="note-bit1">✓ Guardado</div>
+      </div>
+      <div class="bit-q">
+        <label>2. Si fueras el DBA de una clínica, ¿qué roles crearías para médicos, recepcionistas y administradores? ¿Qué privilegios tendría cada uno? Justifica.</label>
+        <textarea id="bit2" data-key="bit2" placeholder="Para una clínica, crearía los roles..." oninput="autoSave('bit2',this.value)"></textarea>
+        <div class="save-note" id="note-bit2">✓ Guardado</div>
+      </div>
+      <div class="bit-q">
+        <label>3. ¿Qué fue lo más difícil de entender en esta unidad? ¿Cómo lo resolviste? ¿Qué te gustaría seguir practicando?</label>
+        <textarea id="bit3" data-key="bit3" placeholder="Lo más difícil fue... Lo resolví cuando... Me gustaría practicar más..." oninput="autoSave('bit3',this.value)"></textarea>
+        <div class="save-note" id="note-bit3">✓ Guardado</div>
+      </div>
+      <div class="pager">
+        <button class="btn ghost" onclick="go('simulador')">← Simulador MySQL</button>
+        <button class="btn" onclick="go('evaluacion')">13 · Evaluación final →</button>
+      </div>
+    </section>
+
+    <!-- ══ SEC 13: EVALUACIÓN FINAL ══ -->
+    <section class="page" id="sec-evaluacion">
+      <div class="eyebrow">Sección 13 · Evaluación final</div>
+      <h2 class="page-title">Envío de reporte al docente</h2>
+
+      <div id="evalSent" style="display:none">
+        <div class="score-hero">
+          <div class="score-n" id="evalScore">—</div>
+          <div class="score-label">Calificación final de la Unidad 3</div>
+          <div class="score-sub">RA 3.1 + RA 3.2 · 20% del módulo COBD-20</div>
+        </div>
+        <div class="folio-box">
+          <div class="folio-label">Folio de envío</div>
+          <div class="folio-num" id="folioNum">—</div>
+          <div class="folio-sub">Guardado en Supabase · Reporte enviado al docente</div>
+        </div>
+        <div class="callout ok"><div class="c-title">¡Reporte enviado exitosamente!</div>
+          <p>Tu calificación ha llegado al docente con fecha, hora y folio. El cuaderno queda sellado — los apuntes y el simulador MySQL siguen disponibles para consulta. ¡Buen trabajo!</p>
+        </div>
+      </div>
+
+      <div id="evalPending">
+        <div class="callout warn"><div class="c-title">Antes de enviar tu reporte</div>
+          <p>Verifica que tus <strong>dos actividades</strong> estén completadas y tu <strong>bitácora</strong> guardada. Una vez enviado, el cuaderno queda sellado y el reporte llega al docente por correo con tu nombre, matrícula, grupo y folio único.</p>
+        </div>
+
+        <div class="card" id="resumenEval">
+          <h3>Resumen de tu evaluación</h3>
+          <div id="evalDetalle" style="font-size:14px;color:var(--gris)">Calculando...</div>
+        </div>
+
+        <button class="btn" onclick="enviarReporte()" style="margin-bottom:24px">🏆 Enviar reporte al docente</button>
+
+        <div class="admin-section">
+          <h4>🔑 Área del docente</h4>
+          <p style="font-size:13px;color:var(--gris);margin-bottom:10px">Si un alumno necesita reintento, ingresa la clave para liberar una actividad específica.</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input type="text" id="adminKey" placeholder="Clave docente" style="width:180px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-family:var(--mono);font-size:13px;outline:none">
+            <select id="adminAct" style="border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13px;outline:none">
+              <option value="">Selecciona actividad...</option>
+              <option value="act1">Actividad 1 — RA 3.1</option>
+              <option value="act2">Actividad 2 — RA 3.2</option>
+            </select>
+            <button class="btn ghost" onclick="liberarAdmin()">Liberar reintento</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+/* ════════════════════════════════════════════
+   COBD CLASSROOM · UNIDAD 3
+   ⚠️  IMPORTANTE: Reemplaza estas credenciales
+       con las de tu nuevo proyecto Supabase COBD
+════════════════════════════════════════════ */
+const SUPA_URL  = 'https://ygcarnzfpxdxycyncuux.supabase.co';
+const SUPA_KEY  = 'sb_publishable_OjAHa5rt21SnviLFHBk1aw_EBEdk3Q-';
+const CUADERNO  = 'cobd_u3';           // ← clave que se guarda en Supabase
+const CLAVE_DOCENTE = 'COBD2526';      // ← clave para liberar reintentos
+const FORMSUBMIT_EMAIL = 'profesantiagomtzglez@gmail.com';
+
+/* Supabase client */
+let sb = null;
+try { sb = supabase.createClient(SUPA_URL, SUPA_KEY); } catch(e) { console.warn('Supabase no configurado'); }
+
+/* Estado global */
+const state = {
+  alumno: null,
+  secciones: ['intro','acid','bloqueo','concurrencia','ejemplo1','acceso','cifrado','ejemplo2','act1','act2','simulador','bitacora','evaluacion'],
+  visitadas: new Set(),
+  enviado: false
+};
+
+/* ════ AUTENTICACIÓN ════ */
+function switchTab(tab){
+  document.querySelectorAll('.g-tab').forEach((t,i)=>t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='registro')));
+  document.getElementById('formLogin').classList.toggle('active', tab==='login');
+  document.getElementById('formRegistro').classList.toggle('active', tab==='registro');
+  document.getElementById('gateError').classList.remove('show');
+}
+
+async function doLogin(){
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  if(!email || !pass){ showGateError('Completa correo y contraseña.'); return; }
+  const btn = document.querySelector('#formLogin .btn');
+  btn.textContent='Entrando...'; btn.disabled=true;
+  const {data, error} = await sb.auth.signInWithPassword({email, password:pass});
+  if(error){ showGateError('Correo o contraseña incorrectos.'); btn.textContent='Entrar al cuaderno →'; btn.disabled=false; return; }
+  await initApp(data.user);
+}
+
+async function doRegistro(){
+  const nombre = document.getElementById('regNombre').value.trim();
+  const email  = document.getElementById('regEmail').value.trim();
+  const mat    = document.getElementById('regMatricula').value.trim();
+  const grupo  = document.getElementById('regGrupo').value;
+  const turno  = document.getElementById('regTurno').value;
+  const pass   = document.getElementById('regPass').value;
+  if(!nombre||!email||!mat||!grupo||!turno||!pass){ showGateError('Completa todos los campos.'); return; }
+  if(!email.endsWith('@tam.conalep.edu.mx')){ showGateError('Usa tu correo @tam.conalep.edu.mx'); return; }
+  if(pass.length < 8){ showGateError('La contraseña debe tener al menos 8 caracteres.'); return; }
+  const btn = document.querySelector('#formRegistro .btn');
+  btn.textContent='Creando cuenta...'; btn.disabled=true;
+  const {data, error} = await sb.auth.signUp({email, password:pass});
+  if(error){ showGateError('Error: '+error.message); btn.textContent='Crear mi cuenta →'; btn.disabled=false; return; }
+  await sb.from('profiles').upsert({id:data.user.id, email, nombre, matricula:mat, grupo, turno},{onConflict:'id'});
+  await initApp(data.user);
+}
+
+function showGateError(msg){ const el=document.getElementById('gateError'); el.textContent=msg; el.classList.add('show'); }
+
+async function initApp(user){
+  // Cargar perfil
+  const {data:prof} = await sb.from('profiles').select('*').eq('id',user.id).single();
+  state.alumno = prof || {id:user.id, email:user.email, nombre:user.email, matricula:'—', grupo:'—'};
+
+  // Cargar avances, entregas y envío
+  const [{data:av},{data:ents},{data:env}] = await Promise.all([
+    sb.from('avances').select('estado').eq('user_id',user.id).eq('cuaderno',CUADERNO).single(),
+    sb.from('entregas').select('*').eq('user_id',user.id).eq('cuaderno',CUADERNO),
+    sb.from('envios').select('*').eq('user_id',user.id).eq('cuaderno',CUADERNO).single()
+  ]);
+
+  // Restaurar estado
+  if(av?.estado){
+    const est = av.estado;
+    if(est.visitadas) est.visitadas.forEach(v=>state.visitadas.add(v));
+    // Restaurar campos de texto
+    if(est.campos){
+      Object.entries(est.campos).forEach(([k,v])=>{
+        const el=document.getElementById(k);
+        if(el) el.value=v;
+      });
+    }
+    // Restaurar radios
+    if(est.radios){
+      Object.entries(est.radios).forEach(([name,val])=>{
+        const r=document.querySelector(`input[name="${name}"][value="${val}"]`);
+        if(r) r.checked=true;
+      });
+    }
+  }
+
+  // Restaurar entregas bloqueadas
+  if(ents) ents.forEach(e=>{
+    const locked = document.getElementById(e.actividad+'Locked');
+    const body   = document.getElementById(e.actividad+'Body');
+    if(locked) locked.style.display='flex';
+    if(body)   body.style.opacity='0.5';
+    body && (body.style.pointerEvents='none');
+  });
+
+  state.enviado = !!env;
+  if(env){
+    document.getElementById('evalSent').style.display='block';
+    document.getElementById('evalPending').style.display='none';
+    document.getElementById('evalScore').textContent = (env.total||0)+'/100';
+    document.getElementById('folioNum').textContent = env.folio||'—';
+  }
+
+  // Mostrar app
+  document.getElementById('gateScreen').style.display='none';
+  document.getElementById('appShell').style.display='flex';
+  document.getElementById('userLabel') && (document.getElementById('userLabel').textContent = state.alumno.nombre);
+
+  updateTOC();
+  updateProgress();
+  calcEval();
+  initSQL();
+}
+
+/* ════ NAVEGACIÓN ════ */
+function go(sec){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const pg = document.getElementById('sec-'+sec);
+  if(pg){ pg.classList.add('active'); state.visitadas.add(sec); }
+  document.querySelectorAll('.toc a').forEach(a=>{
+    a.classList.toggle('active', a.dataset.sec===sec);
+  });
+  window.scrollTo(0,0);
+  updateTOC();
+  updateProgress();
+  saveAvances();
+  if(sec==='evaluacion') calcEval();
+}
+
+function updateTOC(){
+  document.querySelectorAll('.toc a').forEach(a=>{
+    a.querySelector('.dot')?.classList.toggle('done', state.visitadas.has(a.dataset.sec));
+  });
+}
+
+function updateProgress(){
+  const total = state.secciones.length;
+  const done = state.secciones.filter(s=>state.visitadas.has(s)).length;
+  const pct = Math.round((done/total)*100);
+  document.getElementById('progPct').textContent = pct+'%';
+  document.getElementById('progFill').style.width = pct+'%';
+}
+
+/* TOC clicks */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.toc a[data-sec]').forEach(a=>{
+    a.addEventListener('click',()=>go(a.dataset.sec));
+  });
+  // Default first section
+  go('intro');
+});
+
+/* ════ AUTOSAVE ════ */
+let saveTimer = null;
+function autoSave(key, val){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    await saveAvances();
+    const note = document.getElementById('note-'+key);
+    if(note){ note.classList.add('show'); setTimeout(()=>note.classList.remove('show'),2000); }
+  }, 900);
+}
+
+async function saveAvances(){
+  if(!state.alumno || !sb) return;
+  const campos = {};
+  document.querySelectorAll('[data-key]').forEach(el=>{ if(el.value) campos[el.id]=el.value; });
+  const radios = {};
+  document.querySelectorAll('input[type=radio]:checked').forEach(r=>{ radios[r.name]=r.value; });
+  const estado = { visitadas:[...state.visitadas], campos, radios };
+  await sb.from('avances').upsert({user_id:state.alumno.id, cuaderno:CUADERNO, estado, updated_at:new Date().toISOString()},{onConflict:'user_id,cuaderno'});
+}
+
+/* ════ VERIFICACIÓN DE RESPUESTAS ════ */
+function checkRadio(name, correct, fbId, msgOk, msgErr){
+  const sel = document.querySelector(`input[name="${name}"]:checked`);
+  if(!sel){ alert('Selecciona una opción.'); return; }
+  const fb = document.getElementById(fbId);
+  const opts = document.querySelectorAll(`input[name="${name}"]`);
+  opts.forEach(o=>{
+    const label = o.closest('label');
+    label.classList.remove('correct','wrong');
+    if(o.value===correct) label.classList.add('correct');
+    else if(o.checked) label.classList.add('wrong');
+  });
+  fb.textContent = sel.value===correct ? '✓ '+msgOk : '✗ '+msgErr;
+  fb.className = 'fb show '+(sel.value===correct?'ok':'err');
+  opts.forEach(o=>o.disabled=true);
+  saveAvances();
+}
+
+/* ════ CALCULAR EVALUACIÓN ════ */
+function calcEval(){
+  // Conceptuales: cada radio correcto = 10 pts
+  const cA = { qa1:'b', qa2:'c', qa3:'b', qc1:'b', r2a1:'b', r2a2:'b', r2c2:'b' };
+  let pts = 0;
+  Object.entries(cA).forEach(([n,c])=>{
+    const sel = document.querySelector(`input[name="${n}"]:checked`);
+    if(sel?.value===c) pts += 10;
+  });
+  // Textuales: 15 pts cada uno si tienen texto (actB, actC2, r2a3, actB2, actC1b2)
+  const textuales = ['actB','actC2','r2a3','actB2','actC1b2'];
+  textuales.forEach(id=>{ const el=document.getElementById(id); if(el?.value?.trim().length>20) pts+=10; });
+  // Bitacora: 5 pts cada una
+  ['bit1','bit2','bit3'].forEach(id=>{ const el=document.getElementById(id); if(el?.value?.trim().length>10) pts+=5; });
+  const total = Math.min(pts, 100);
+  const det = document.getElementById('evalDetalle');
+  if(det) det.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+      <div style="padding:14px;background:var(--azul-tinte);border-radius:10px">
+        <div style="font-size:11px;color:var(--azul);font-weight:700;font-family:var(--mono);text-transform:uppercase;margin-bottom:4px">Actividad 1 · RA 3.1</div>
+        <div style="font-size:22px;font-weight:700;color:var(--azul-osc)">${calcActPts('act1')} <span style="font-size:14px;font-weight:400">/ 90 pts</span></div>
+      </div>
+      <div style="padding:14px;background:var(--ok-bg);border-radius:10px">
+        <div style="font-size:11px;color:var(--ok);font-weight:700;font-family:var(--mono);text-transform:uppercase;margin-bottom:4px">Actividad 2 · RA 3.2</div>
+        <div style="font-size:22px;font-weight:700;color:var(--ok)">${calcActPts('act2')} <span style="font-size:14px;font-weight:400">/ 90 pts</span></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:12px;background:#F8FAFC;border-radius:8px;font-size:13px;color:var(--gris)">
+      Bitácora completada · Calificación preliminar: <strong style="color:var(--ink);font-size:15px">${total}/100</strong>
+    </div>`;
+  return total;
+}
+
+function calcActPts(act){
+  if(act==='act1'){
+    let p=0;
+    ['qa1','qa2','qa3','qc1'].forEach(n=>{ if(document.querySelector(`input[name="${n}"]:checked`)?.value==={qa1:'b',qa2:'c',qa3:'b',qc1:'b'}[n]) p+=10; });
+    if(document.getElementById('actB')?.value?.trim().length>30) p+=35;
+    if(document.getElementById('actC2')?.value?.trim().length>20) p+=25;
+    return Math.min(p,90);
+  } else {
+    let p=0;
+    ['r2a1','r2a2','r2c2'].forEach(n=>{ if(document.querySelector(`input[name="${n}"]:checked`)?.value==={r2a1:'b',r2a2:'b',r2c2:'b'}[n]) p+=10; });
+    if(document.getElementById('r2a3')?.value?.trim().length>15) p+=10;
+    if(document.getElementById('actB2')?.value?.trim().length>30) p+=35;
+    if(document.getElementById('actC1b2')?.value?.trim().length>20) p+=15;
+    return Math.min(p,90);
+  }
+}
+
+/* ════ ENVÍO FINAL ════ */
+async function enviarReporte(){
+  if(!state.alumno){ alert('Inicia sesión primero.'); return; }
+  if(!confirm('¿Enviar tu reporte ahora? El cuaderno quedará sellado.')) return;
+  const total = calcEval();
+  const folio = 'COBD-U3-'+Date.now().toString(36).toUpperCase();
+  const fecha = new Date().toLocaleString('es-MX');
+
+  // Guardar en Supabase
+  if(sb){
+    await sb.from('envios').upsert({user_id:state.alumno.id, cuaderno:CUADERNO, folio, total, fecha:new Date().toISOString()},{onConflict:'user_id,cuaderno'});
+    await sb.from('entregas').upsert([
+      {user_id:state.alumno.id, cuaderno:CUADERNO, actividad:'act1', campos:{actB:document.getElementById('actB')?.value, actC2:document.getElementById('actC2')?.value}, pts:calcActPts('act1'), max:90},
+      {user_id:state.alumno.id, cuaderno:CUADERNO, actividad:'act2', campos:{actB2:document.getElementById('actB2')?.value, actC1b2:document.getElementById('actC1b2')?.value}, pts:calcActPts('act2'), max:90}
+    ].map(e=>({...e})),{onConflict:'user_id,cuaderno,actividad'});
+  }
+
+  // FormSubmit email
+  const campos = {
+    actB: document.getElementById('actB')?.value||'',
+    actC2: document.getElementById('actC2')?.value||'',
+    actB2: document.getElementById('actB2')?.value||'',
+    actC1b2: document.getElementById('actC1b2')?.value||'',
+    bit1: document.getElementById('bit1')?.value||'',
+    bit2: document.getElementById('bit2')?.value||'',
+    bit3: document.getElementById('bit3')?.value||''
+  };
+  const body = `COBD-20 · Unidad 3 · Reporte de alumno\n\nAlumno: ${state.alumno.nombre}\nMatrícula: ${state.alumno.matricula}\nGrupo: ${state.alumno.grupo} · ${state.alumno.turno}\nFecha: ${fecha}\nFolio: ${folio}\n\nCALIFICACIÓN: ${total}/100\nAct. 1 (RA 3.1): ${calcActPts('act1')}/90\nAct. 2 (RA 3.2): ${calcActPts('act2')}/90\n\n---\nACT 1 - Transacción SQL:\n${campos.actB}\n\nACT 1 - Análisis Deadlock:\n${campos.actC2}\n\nACT 2 - SQL Acceso:\n${campos.actB2}\n\nACT 2 - Cifrado:\n${campos.actC1b2}\n\nBITÁCORA 1:\n${campos.bit1}\nBITÁCORA 2:\n${campos.bit2}\nBITÁCORA 3:\n${campos.bit3}`;
+  try{
+    await fetch(`https://formsubmit.co/${FORMSUBMIT_EMAIL}`,{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({_subject:`[COBD-U3] ${state.alumno.nombre} · ${total}/100 · Folio:${folio}`, _captcha:'false', message: body})
+    });
+  } catch(e){ console.warn('FormSubmit error', e); }
+
+  // Sellar
+  state.enviado = true;
+  document.getElementById('evalSent').style.display='block';
+  document.getElementById('evalPending').style.display='none';
+  document.getElementById('evalScore').textContent = total+'/100';
+  document.getElementById('folioNum').textContent = folio;
+
+  // Bloquear actividades
+  ['act1','act2'].forEach(a=>{
+    const locked=document.getElementById(a+'Locked');
+    const body_=document.getElementById(a+'Body');
+    if(locked) locked.style.display='flex';
+    if(body_){ body_.style.opacity='0.5'; body_.style.pointerEvents='none'; }
+  });
+}
+
+/* ════ DESBLOQUEO ════ */
+function desbloquear(act){
+  const key = document.getElementById('unlock'+act.charAt(0).toUpperCase()+act.slice(1))?.value?.trim();
+  if(key !== CLAVE_DOCENTE){ alert('Clave incorrecta.'); return; }
+  const locked=document.getElementById(act+'Locked');
+  const body_=document.getElementById(act+'Body');
+  if(locked) locked.style.display='none';
+  if(body_){ body_.style.opacity='1'; body_.style.pointerEvents='auto'; }
+  if(sb && state.alumno) sb.from('entregas').delete().eq('user_id',state.alumno.id).eq('cuaderno',CUADERNO).eq('actividad',act);
+}
+
+function liberarAdmin(){
+  const key = document.getElementById('adminKey').value.trim();
+  const act = document.getElementById('adminAct').value;
+  if(key!==CLAVE_DOCENTE){ alert('Clave incorrecta.'); return; }
+  if(!act){ alert('Selecciona una actividad.'); return; }
+  const locked=document.getElementById(act+'Locked');
+  const body_=document.getElementById(act+'Body');
+  if(locked) locked.style.display='none';
+  if(body_){ body_.style.opacity='1'; body_.style.pointerEvents='auto'; }
+  if(sb && state.alumno) sb.from('entregas').delete().eq('user_id',state.alumno.id).eq('cuaderno',CUADERNO).eq('actividad',act);
+  alert('✅ Actividad '+act+' liberada correctamente.');
+}
+
+/* ════ SIMULADOR SQL (sql.js) ════ */
+let sqlDB = null;
+
+async function initSQL(){
+  try{
+    const SQL = await initSqlJs({locateFile: f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${f}`});
+    sqlDB = new SQL.Database();
+    // Schema: empresa_cobd
+    sqlDB.run(`
+      CREATE TABLE departments (id INTEGER PRIMARY KEY, name TEXT, budget REAL);
+      INSERT INTO departments VALUES (1,'Ventas',500000),(2,'Tecnología',750000),(3,'Recursos Humanos',300000),(4,'Finanzas',450000);
+
+      CREATE TABLE employees (id INTEGER PRIMARY KEY, name TEXT, salary REAL, department_id INTEGER, hire_date TEXT, email TEXT);
+      INSERT INTO employees VALUES
+        (1,'Carlos Mendoza',22000,1,'2021-03-15','cmendoza@empresa.mx'),
+        (2,'Laura Sánchez',35000,2,'2020-08-01','lsanchez@empresa.mx'),
+        (3,'Ana Martínez',18500,3,'2022-01-10','amartinez@empresa.mx'),
+        (4,'Pedro Flores',41000,2,'2019-05-20','pflores@empresa.mx'),
+        (5,'María López',15000,1,'2023-09-05','mlopez@empresa.mx'),
+        (6,'Jorge Ramírez',28000,4,'2021-11-30','jramirez@empresa.mx'),
+        (7,'Sofía Torres',31500,2,'2020-02-14','storres@empresa.mx'),
+        (8,'Diego Hernández',19000,1,'2022-07-22','dhernandez@empresa.mx');
+
+      CREATE TABLE products (id INTEGER PRIMARY KEY, name TEXT, price REAL, stock INTEGER, category TEXT);
+      INSERT INTO products VALUES
+        (1,'Laptop HP 15"',12500,45,'Equipos'),
+        (2,'Monitor LG 24"',3800,120,'Periféricos'),
+        (3,'Teclado Logitech',850,200,'Periféricos'),
+        (4,'Mouse Inalámbrico',550,300,'Periféricos'),
+        (5,'Switch 8 puertos',2200,30,'Redes'),
+        (6,'Cable UTP Cat6 (metro)',25,500,'Redes'),
+        (7,'Disco SSD 1TB',1900,80,'Almacenamiento'),
+        (8,'Memoria RAM 16GB',1400,150,'Almacenamiento');
+
+      CREATE TABLE orders (id INTEGER PRIMARY KEY, employee_id INTEGER, order_date TEXT, total REAL, status TEXT);
+      INSERT INTO orders VALUES
+        (1,1,'2026-06-01',15300,'completed'),
+        (2,2,'2026-06-03',7600,'completed'),
+        (3,5,'2026-06-10',4250,'pending'),
+        (4,1,'2026-06-15',2750,'completed'),
+        (5,8,'2026-06-20',12500,'pending');
+
+      CREATE TABLE order_items (id INTEGER PRIMARY KEY, order_id INTEGER, product_id INTEGER, quantity INTEGER, unit_price REAL);
+      INSERT INTO order_items VALUES
+        (1,1,1,1,12500),(2,1,4,5,550),(3,2,2,2,3800),
+        (4,3,3,3,850),(5,3,4,2,550),(6,4,6,50,25),(7,4,3,2,850),
+        (8,5,1,1,12500);
+    `);
+    document.getElementById('simOut').innerHTML = '<span class="ok-line">✓ Base de datos empresa_cobd cargada — 5 tablas, datos de ejemplo listos</span>';
+    updateGutter();
+  } catch(e){
+    document.getElementById('simOut').innerHTML = '<span class="err-line">⚠ El simulador no pudo cargar. Verifica tu conexión a internet.</span>';
+  }
+}
+
+function runSQL(){
+  const code = document.getElementById('simCode').value.trim();
+  if(!code){ return; }
+  if(!sqlDB){ document.getElementById('simOut').innerHTML='<span class="err-line">El simulador aún está cargando...</span>'; return; }
+  const out = document.getElementById('simOut');
+  try{
+    // Simular transacciones: interpretar BEGIN/COMMIT/ROLLBACK como comentarios (sql.js no las soporta natalmente pero las acepta)
+    const stmts = code.split(';').map(s=>s.trim()).filter(s=>s && !/^--/.test(s));
+    let html='';
+    stmts.forEach(stmt=>{
+      if(!stmt) return;
+      // Transacción keywords
+      if(/^(BEGIN|START TRANSACTION|COMMIT|ROLLBACK|SAVEPOINT|ROLLBACK TO)/i.test(stmt)){
+        html += `<span class="ok-line">→ ${stmt.toUpperCase()} — procesado</span>\n`;
+        return;
+      }
+      // DDL ignorado para simplificar
+      if(/^(CREATE USER|GRANT|REVOKE|FLUSH|SHOW GRANTS|LOCK|UNLOCK|SET SESSION)/i.test(stmt)){
+        html += `<span class="ok-line">→ ${stmt.substring(0,60)}... — simulado en MySQL real</span>\n`;
+        return;
+      }
+      // Cifrado simulado
+      if(/AES_ENCRYPT|AES_DECRYPT|SHA2/i.test(stmt)){
+        html += `<span class="ok-line">→ Función de cifrado MySQL — simulada (resultado en MySQL real)</span>\n`;
+        return;
+      }
+      const res = sqlDB.exec(stmt);
+      if(!res.length){
+        const changes = sqlDB.getRowsModified();
+        html += `<span class="ok-line">✓ Query OK — ${changes} fila(s) afectada(s)</span>\n`;
+      } else {
+        res.forEach(r=>{
+          // Cabecera
+          html += `<span class="head-line">${r.columns.join(' | ')}</span>\n`;
+          html += `<span class="sep">${r.columns.map(c=>'-'.repeat(Math.max(c.length,10))).join('-+-')}</span>\n`;
+          r.values.forEach(row=>{
+            html += row.map(v=> v===null?'NULL':String(v)).join(' | ')+'\n';
+          });
+          html += `<span class="muted">${r.values.length} fila(s) en el resultado</span>\n`;
+        });
+      }
+    });
+    out.innerHTML = html || '<span class="muted">Sin resultado</span>';
+  } catch(e){
+    out.innerHTML = `<span class="err-line">✗ Error: ${e.message}</span>`;
+  }
+}
+
+function clearSQL(){
+  document.getElementById('simCode').value='';
+  document.getElementById('simOut').innerHTML='<span class="muted">Editor limpio — escribe tu SQL</span>';
+  updateGutter();
+}
+
+function updateGutter(){
+  const code = document.getElementById('simCode').value;
+  const lines = (code.match(/\n/g)||[]).length + 1;
+  const g = document.getElementById('simGutter');
+  g.innerHTML = Array.from({length:lines},(_,i)=>`<span>${i+1}</span>`).join('');
+}
+
+function handleTab(e){
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const ta=e.target, s=ta.selectionStart, en=ta.selectionEnd;
+    ta.value=ta.value.substring(0,s)+'  '+ta.value.substring(en);
+    ta.selectionStart=ta.selectionEnd=s+2;
+    updateGutter();
+  }
+}
+
+function toggleSchema(){
+  document.getElementById('schemaPanel').classList.toggle('open');
+}
+
+const SNIPPETS = {
+  consulta:`-- Consulta con JOIN: empleados y sus departamentos
+SELECT e.name AS empleado, e.salary, d.name AS depto
+FROM employees e
+INNER JOIN departments d ON e.department_id = d.id
+ORDER BY e.salary DESC;`,
+  transaccion:`-- Simulación de transacción
+BEGIN;
+  UPDATE products SET stock = stock - 2 WHERE id = 1 AND stock >= 2;
+  INSERT INTO orders (employee_id, order_date, total, status)
+  VALUES (1, '2026-06-23', 25000, 'pending');
+COMMIT;
+
+-- Verificar resultado
+SELECT id, name, stock FROM products WHERE id = 1;`,
+  bloqueo:`-- Ver stock antes de "bloquear"
+SELECT id, name, stock, price FROM products
+WHERE id = 2;
+
+-- Simular actualización protegida
+BEGIN;
+  UPDATE products SET stock = stock - 5 WHERE id = 2 AND stock >= 5;
+COMMIT;
+
+SELECT id, name, stock FROM products WHERE id = 2;`,
+  cifrado:`-- Funciones de cifrado se muestran como comentarios en el simulador
+-- En MySQL real ejecutarías:
+-- INSERT INTO employees(name, salary) VALUES('Test', AES_ENCRYPT('12345', 'clave'));
+-- SELECT name, AES_DECRYPT(curp, 'clave') FROM employees;
+
+-- Aquí podemos practicar consultas normales:
+SELECT name, salary FROM employees WHERE salary > 25000;`
+};
+
+function loadSnippet(name){
+  document.querySelectorAll('.sim-tab').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('simCode').value=SNIPPETS[name];
+  document.getElementById('simOut').innerHTML='<span class="muted">Snippet cargado — presiona ▶ Ejecutar</span>';
+  updateGutter();
+}
+</script>
+</body>
+</html>
