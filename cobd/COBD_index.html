@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Construcción de Bases de Datos · COBD-20 · CONALEP</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;700&display=swap');
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2230;--border:#30363d;
+  --accent:#38BDF8;--text:#e6edf3;--muted:#8b949e;--green:#3fb950;--yellow:#d29922;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  min-height:100vh;font-family:'IBM Plex Sans',sans-serif;
+  background:
+    radial-gradient(ellipse 60% 40% at 10% 0%,rgba(14,126,196,.10),transparent),
+    radial-gradient(ellipse 50% 50% at 90% 100%,rgba(56,189,248,.06),transparent),
+    var(--bg);
+  color:var(--text);line-height:1.7;
+}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#0E7EC4,#38BDF8,#06B6D4,#0E7EC4);
+  background-size:200%;animation:gradbar 4s linear infinite;z-index:200}
+@keyframes gradbar{0%{background-position:0%}100%{background-position:200%}}
+.page{max-width:1160px;margin:0 auto;padding:48px 22px 80px}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:44px;flex-wrap:wrap}
+.breadcrumb{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted)}
+.breadcrumb a{color:var(--accent);text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.credit-chip{display:inline-flex;flex-direction:column;gap:1px;padding:10px 16px;
+  border:1px solid rgba(56,189,248,.3);border-left:3px solid var(--accent);
+  border-radius:10px;background:rgba(22,27,34,.85)}
+.credit-chip span{font-family:'IBM Plex Mono',monospace;color:var(--accent);font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+.credit-chip strong{font-size:15px;color:#fff}
+
+.hero{border:1px solid rgba(56,189,248,.25);border-bottom:3px solid var(--accent);
+  border-radius:24px;padding:56px 52px 48px;
+  background:linear-gradient(145deg,#050d14 0%,#071520 55%,#081c2b 100%);
+  position:relative;overflow:hidden;margin-bottom:44px}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:380px;height:380px;
+  border-radius:50%;border:70px solid rgba(56,189,248,.05)}
+.hero::after{content:'SQL';position:absolute;right:52px;bottom:28px;
+  font-family:'IBM Plex Mono',monospace;font-size:100px;font-weight:700;
+  color:rgba(56,189,248,.04);letter-spacing:-3px;user-select:none;line-height:1}
+.hero-tag{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);
+  letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;display:block}
+.hero h1{font-size:clamp(34px,5.5vw,62px);font-weight:700;line-height:1.04;color:#fff;max-width:740px}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero-sub{color:var(--muted);font-size:16px;margin-top:18px;font-weight:300;max-width:580px;line-height:1.65}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.pill{background:rgba(255,255,255,.04);border:1px solid rgba(56,189,248,.2);
+  border-radius:999px;padding:5px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+.pill b{color:var(--text)}
+
+.resumen-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:44px}
+.resumen-card{background:rgba(22,27,34,.92);border:1px solid var(--border);border-radius:14px;
+  padding:22px 18px;text-align:center;transition:border-color .2s,transform .2s}
+.resumen-card:hover{border-color:rgba(56,189,248,.3);transform:translateY(-2px)}
+.resumen-card .n{font-family:'IBM Plex Mono',monospace;font-size:30px;font-weight:700;
+  color:var(--accent);line-height:1;margin-bottom:7px}
+.resumen-card .l{font-size:12px;color:var(--muted);line-height:1.45}
+
+.code-preview{background:#0d1117;border:1px solid rgba(56,189,248,.2);border-radius:16px;
+  padding:26px 28px;font-family:'IBM Plex Mono',monospace;font-size:13px;
+  line-height:1.85;margin-bottom:44px;overflow-x:auto}
+.code-preview .cm{color:#5B9E72;font-style:italic}
+.code-preview .kw{color:#38BDF8;font-weight:600}
+.code-preview .ty{color:#7EE787}
+.code-preview .str{color:#FFD700}
+.code-preview .fn{color:#D2A8FF}
+.code-preview .num{color:#FFA657}
+.code-title{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--muted);margin-bottom:16px;background:rgba(255,255,255,.04);
+  border:1px solid var(--border);border-radius:6px;padding:4px 12px}
+.code-title::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block}
+
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.sec-head h2{font-size:20px;color:#fff;font-weight:700}
+.sec-head p{color:var(--muted);font-size:13px;font-family:'IBM Plex Mono',monospace}
+
+.ra-card{display:flex;align-items:center;gap:18px;background:rgba(22,27,34,.92);
+  border:1px solid var(--border);border-radius:16px;padding:22px 24px;
+  text-decoration:none;transition:border-color .2s,background .2s,transform .15s;
+  position:relative;overflow:hidden;margin-bottom:36px}
+.ra-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:var(--accent);opacity:0;transition:opacity .2s}
+.ra-card:hover{border-color:rgba(56,189,248,.4);background:rgba(56,189,248,.04);transform:translateX(2px)}
+.ra-card:hover::before{opacity:1}
+.ra-icon{width:54px;height:54px;border-radius:13px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;
+  background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.3);color:var(--accent)}
+.ra-info{flex:1;min-width:0}
+.ra-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent);
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.ra-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:5px}
+.ra-desc{font-size:13px;color:var(--muted);line-height:1.6}
+.ra-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.ra-meta span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);
+  background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:2px 8px}
+.ra-meta span.green{color:var(--green);border-color:rgba(63,185,80,.3);background:rgba(63,185,80,.07)}
+.ra-meta span.accent{color:var(--accent);border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.07)}
+.ra-right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;flex-shrink:0}
+.ponder-badge{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;
+  padding:6px 14px;border-radius:999px;
+  background:linear-gradient(135deg,rgba(56,189,248,.2),rgba(14,126,196,.1));
+  border:1px solid rgba(56,189,248,.3);color:var(--accent)}
+.ra-arrow{font-size:22px;color:var(--accent);opacity:.5;transition:opacity .2s,transform .2s}
+.ra-card:hover .ra-arrow{opacity:1;transform:translateX(4px)}
+
+.status-dot{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;
+  font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+  border-radius:999px;padding:4px 11px;margin-bottom:10px;width:fit-content;
+  color:var(--green);background:rgba(63,185,80,.09);border:1px solid rgba(63,185,80,.25)}
+.status-dot::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);
+  display:inline-block;animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.info-panel{padding:18px 22px;background:rgba(56,189,248,.06);
+  border:1px solid rgba(56,189,248,.20);border-left:4px solid var(--accent);
+  border-radius:12px;color:var(--muted);font-size:13.5px;line-height:1.65}
+.info-panel b{color:var(--text)}
+
+footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  gap:14px;flex-wrap:wrap;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted)}
+.footer-logo{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase}
+
+@media(max-width:900px){.resumen-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.hero{padding:30px 22px 28px}.hero::after{display:none}
+  .resumen-grid{grid-template-columns:1fr 1fr}.ra-right{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="topbar">
+    <div class="breadcrumb">
+      <a href="../index.html">← Mi Ruta de Aprendizaje</a>
+    </div>
+    <div class="credit-chip">
+      <span>Material didáctico desarrollado por:</span>
+      <strong>Ing. Santiago Martínez González</strong>
+    </div>
+  </div>
+
+  <header class="hero">
+    <span class="hero-tag">COBD-20 · 4° Semestre · PT-B en Informática · CONALEP</span>
+    <h1>Construcción de<br><em>Bases de Datos</em></h1>
+    <p class="hero-sub">Asegura, protege y controla tus bases de datos con MySQL. Transacciones ACID, bloqueos, control de acceso con roles y cifrado de datos. Simulador SQL integrado — sin instalar nada.</p>
+    <div class="hero-pills">
+      <div class="pill">Grupos: <b>410 · 411</b></div>
+      <div class="pill">Semestre: <b>4°</b></div>
+      <div class="pill">SGBD: <b>MySQL</b></div>
+      <div class="pill">Ciclo: <b>2 · 2526</b></div>
+      <div class="pill">Horas: <b>26 hrs</b></div>
+    </div>
+  </header>
+
+  <div class="resumen-grid">
+    <div class="resumen-card"><div class="n">2</div><div class="l">Resultados de aprendizaje</div></div>
+    <div class="resumen-card"><div class="n">2</div><div class="l">Actividades evaluadas</div></div>
+    <div class="resumen-card"><div class="n">20%</div><div class="l">Del módulo COBD-20</div></div>
+    <div class="resumen-card"><div class="n">☁</div><div class="l">Avance guardado en la nube</div></div>
+  </div>
+
+  <div class="code-preview">
+    <div class="code-title">empresa_cobd.sql · Lo que aprenderás en la Unidad 3</div>
+    <span class="cm">-- RA 3.1 · Transacciones con propiedades ACID</span><br>
+    <span class="kw">START TRANSACTION</span>;<br>
+    &nbsp;&nbsp;<span class="kw">UPDATE</span> <span class="ty">products</span> <span class="kw">SET</span> stock = stock - <span class="num">3</span> <span class="kw">WHERE</span> id = <span class="num">1</span> <span class="kw">AND</span> stock >= <span class="num">3</span>;<br>
+    &nbsp;&nbsp;<span class="kw">INSERT INTO</span> <span class="ty">orders</span> (employee_id, total) <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="num">37500</span>);<br>
+    <span class="kw">COMMIT</span>;&nbsp;&nbsp;<span class="cm">-- Atomicidad: todo o nada</span><br><br>
+    <span class="cm">-- RA 3.2 · Control de acceso y cifrado</span><br>
+    <span class="kw">CREATE ROLE</span> <span class="str">'rol_ventas'</span>;<br>
+    <span class="kw">GRANT</span> <span class="fn">SELECT</span>, <span class="fn">INSERT</span> <span class="kw">ON</span> empresa_cobd.orders <span class="kw">TO</span> <span class="str">'rol_ventas'</span>;<br>
+    <span class="kw">INSERT INTO</span> <span class="ty">employees</span>(name, curp_cifrada)<br>
+    <span class="kw">VALUES</span>(<span class="str">'Ana García'</span>, <span class="fn">AES_ENCRYPT</span>(<span class="str">'GAAA990101...'</span>, <span class="str">'clave_secreta'</span>));
+  </div>
+
+  <section>
+    <div class="sec-head">
+      <h2>Unidad 3 · Aseguramiento de la información</h2>
+      <p>26 hrs · RA 3.1 + RA 3.2 · Grupos 410 y 411</p>
+    </div>
+
+    <a class="ra-card" href="COBD_Classroom_U3.html">
+      <div class="ra-icon">U3</div>
+      <div class="ra-info">
+        <div class="status-dot">En curso</div>
+        <div class="ra-label">Resultados de Aprendizaje 3.1 y 3.2 · Unidad 3 completa</div>
+        <div class="ra-title">Transacciones ACID · Control de acceso · Cifrado y respaldos</div>
+        <div class="ra-desc">
+          <strong>RA 3.1 (10%)</strong> — Protocolo ACID, bloqueo en dos fases (2PL), concurrencia, deadlock y niveles de aislamiento en MySQL.<br>
+          <strong>RA 3.2 (10%)</strong> — Usuarios, roles y privilegios con GRANT/REVOKE, cifrado AES, hashing SHA2 y estrategias de respaldo incremental y completo.
+        </div>
+        <div class="ra-meta">
+          <span class="green">✓ Disponible ahora</span>
+          <span>MySQL</span>
+          <span>26 horas</span>
+          <span>2 actividades</span>
+          <span>Simulador SQL</span>
+          <span>Bitácora</span>
+          <span class="accent">☁ Supabase</span>
+        </div>
+      </div>
+      <div class="ra-right">
+        <div class="ponder-badge">20% del módulo</div>
+        <div class="ra-arrow">→</div>
+      </div>
+    </a>
+
+    <div class="info-panel">
+      <b>¿Cómo ingresar?</b> Haz clic en el cuaderno. Si es tu primera vez selecciona <em>"Crear mi cuenta"</em> y regístrate con tu correo <b>@tam.conalep.edu.mx</b> y tu matrícula. Tu avance se guarda en la nube — puedes continuar desde cualquier equipo. Al terminar, envía tu reporte al docente desde el mismo cuaderno.
+    </div>
+  </section>
+
+  <footer>
+    <span class="footer-logo">COBD-20 · Bases de Datos</span>
+    <a href="../index.html" style="color:var(--muted);text-decoration:none">← Regresar al portal principal</a>
+    <span>Ing. Santiago Martínez González · CONALEP Ext. Nuevo Progreso · Ciclo 2 · 2526</span>
+  </footer>
+
+</div>
+</body>
+</html>
