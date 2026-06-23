@@ -1488,8 +1488,8 @@ ORDER BY e.salary DESC;
    ⚠️  IMPORTANTE: Reemplaza estas credenciales
        con las de tu nuevo proyecto Supabase COBD
 ════════════════════════════════════════════ */
-const SUPA_URL  = 'https://ygcarnzfpxdxycyncuux.supabase.co';
-const SUPA_KEY  = 'sb_publishable_OjAHa5rt21SnviLFHBk1aw_EBEdk3Q-';
+const SUPA_URL  = 'https://tnnudyudangwnnjcacyh.supabase.co';
+const SUPA_KEY  = 'sb_publishable_MNO7k62n0RW8qPjHkxjBXQ_HMhpLVAy';
 const CUADERNO  = 'cobd_u3';           // ← clave que se guarda en Supabase
 const CLAVE_DOCENTE = 'COBD2526';      // ← clave para liberar reintentos
 const FORMSUBMIT_EMAIL = 'profesantiagomtzglez@gmail.com';
@@ -1539,7 +1539,7 @@ async function doRegistro(){
   btn.textContent='Creando cuenta...'; btn.disabled=true;
   const {data, error} = await sb.auth.signUp({email, password:pass});
   if(error){ showGateError('Error: '+error.message); btn.textContent='Crear mi cuenta →'; btn.disabled=false; return; }
-  await sb.from('profiles').upsert({id:data.user.id, email, nombre, matricula:mat, grupo, turno},{onConflict:'id'});
+  await sb.from('perfiles').upsert({id:data.user.id, email, nombre, matricula:mat, grupo, turno},{onConflict:'id'});
   await initApp(data.user);
 }
 
@@ -1547,7 +1547,7 @@ function showGateError(msg){ const el=document.getElementById('gateError'); el.t
 
 async function initApp(user){
   // Cargar perfil
-  const {data:prof} = await sb.from('profiles').select('*').eq('id',user.id).single();
+  const {data:prof} = await sb.from('perfiles').select('*').eq('id',user.id).single();
   state.alumno = prof || {id:user.id, email:user.email, nombre:user.email, matricula:'—', grupo:'—'};
 
   // Cargar avances, entregas y envío
