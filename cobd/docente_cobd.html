@@ -128,6 +128,10 @@ td .mat{font-family:var(--mono);font-size:12px}
       <div class="g-field"><label>Correo institucional</label><input type="email" id="dEmail" placeholder="Correo del docente"></div>
       <div class="g-field"><label>Contraseña</label><input type="password" id="dPass" placeholder="Contraseña"></div>
       <button class="btn" onclick="loginDocente()">Acceder al panel →</button>
+      <button class="btn ghost" style="margin-top:10px" onclick="enviarResetDocente()">Enviar recuperación de contraseña</button>
+      <p style="font-size:12px;color:#4A5E6D;line-height:1.5;margin-top:10px">
+        Si Supabase rechaza el acceso, aquí se mostrará el error real. El usuario debe existir en Authentication y en la tabla <strong>perfiles</strong> con rol <strong>docente</strong>.
+      </p>
     </div>
   </div>
 </div>
@@ -224,8 +228,8 @@ td .mat{font-family:var(--mono);font-size:12px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 /* ════ CONFIGURACIÓN — igual que el cuaderno ════ */
-const SUPA_URL = 'https://ygcarnzfpxdxycyncuux.supabase.co';
-const SUPA_KEY = 'sb_publishable_OjAHa5rt21SnviLFHBk1aw_EBEdk3Q-';
+const SUPA_URL = 'https://tnnudyudangwnnjcacyh.supabase.co';
+const SUPA_KEY = 'sb_publishable_MNO7k62n0RW8qPjHkxjBXQ_HMhpLVAy';
 const CUADERNO = 'cobd_u3';
 const CLAVE_DOCENTE = 'COBD2526';
 
@@ -233,19 +237,73 @@ const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 let allData = [], sortCol = 'nombre', sortAsc = true;
 
 /* ════ AUTH DOCENTE ════ */
+function traducirAuthError(error){
+  const msg = (error?.message || '').toLowerCase();
+  if(msg.includes('invalid login credentials')) return 'Supabase rechazó el acceso: correo o contraseña incorrectos. Revisa la contraseña del usuario en Authentication.';
+  if(msg.includes('email not confirmed')) return 'El correo existe, pero no está confirmado en Supabase. En Authentication marca el usuario como confirmado o recréalo con Auto Confirm.';
+  if(msg.includes('rate limit')) return 'Supabase bloqueó temporalmente muchos intentos. Espera unos minutos y vuelve a probar.';
+  return 'Error de Supabase: ' + (error?.message || 'error desconocido');
+}
+
 async function loginDocente(){
-  const email = document.getElementById('dEmail').value.trim();
+  const email = document.getElementById('dEmail').value.trim().toLowerCase();
   const pass  = document.getElementById('dPass').value;
   if(!email||!pass){ showErr('Completa correo y contraseña.'); return; }
+  if(!email.endsWith('@tam.conalep.edu.mx')){ showErr('Usa un correo institucional @tam.conalep.edu.mx'); return; }
+
   const btn = document.querySelector('#gateD .btn');
   btn.textContent='Accediendo...'; btn.disabled=true;
+
   const {data,error} = await sb.auth.signInWithPassword({email,password:pass});
-  if(error){ showErr('Correo o contraseña incorrectos.'); btn.textContent='Acceder al panel →'; btn.disabled=false; return; }
-  document.getElementById('docenteLabel').textContent = 'Ing. Santiago Martínez González';
+
+  if(error){
+    showErr(traducirAuthError(error));
+    btn.textContent='Acceder al panel →';
+    btn.disabled=false;
+    return;
+  }
+
+  const {data:doc,error:docErr} = await sb
+    .from('perfiles')
+    .select('*')
+    .eq('id', data.user.id)
+    .maybeSingle();
+
+  if(docErr){
+    await sb.auth.signOut();
+    showErr('Sí inició sesión, pero no pude leer la tabla perfiles: ' + docErr.message);
+    btn.textContent='Acceder al panel →'; btn.disabled=false;
+    return;
+  }
+
+  if(!doc){
+    await sb.auth.signOut();
+    showErr('Sí inició sesión, pero este usuario no existe en la tabla perfiles. Inserta su registro con rol docente.');
+    btn.textContent='Acceder al panel →'; btn.disabled=false;
+    return;
+  }
+
+  if((doc.rol || '').toLowerCase() !== 'docente'){
+    await sb.auth.signOut();
+    showErr('Sí inició sesión, pero la cuenta no tiene rol docente. Rol actual: ' + (doc.rol || 'vacío'));
+    btn.textContent='Acceder al panel →'; btn.disabled=false;
+    return;
+  }
+
+  document.getElementById('docenteLabel').textContent = doc.nombre || 'Docente';
   document.getElementById('docenteEmail').textContent = email;
   document.getElementById('gateD').style.display='none';
   document.getElementById('appD').style.display='block';
   await cargarDatos();
+}
+
+async function enviarResetDocente(){
+  const email = document.getElementById('dEmail').value.trim().toLowerCase();
+  if(!email){ showErr('Escribe primero el correo docente.'); return; }
+  if(!email.endsWith('@tam.conalep.edu.mx')){ showErr('Usa un correo institucional @tam.conalep.edu.mx'); return; }
+  const {error} = await sb.auth.resetPasswordForEmail(email);
+  if(error){ showErr('No se pudo enviar recuperación: ' + error.message); return; }
+  showErr('Listo. Supabase intentó enviar recuperación al correo: ' + email);
 }
 
 function showErr(m){ const e=document.getElementById('gateErrD'); e.textContent=m; e.classList.add('show'); }
@@ -255,7 +313,7 @@ async function logout(){ await sb.auth.signOut(); location.reload(); }
 async function cargarDatos(){
   document.getElementById('tablaBody').innerHTML='<tr><td colspan="9" class="empty-msg">Cargando datos desde la nube...</td></tr>';
   const [{data:profs},{data:avs},{data:ents},{data:envs}] = await Promise.all([
-    sb.from('profiles').select('*'),
+    sb.from('perfiles').select('*').in('grupo',['410','411']),
     sb.from('avances').select('*').eq('cuaderno',CUADERNO),
     sb.from('entregas').select('*').eq('cuaderno',CUADERNO),
     sb.from('envios').select('*').eq('cuaderno',CUADERNO)
